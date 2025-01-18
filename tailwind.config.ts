@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+import daisyui from "daisyui";
+
 export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,9 +12,17 @@ export default {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
+        foreground: "var(--title-color)",
+        primary: "var(--primary-color)",
+        text: "var(--text-color)",
+        title: "var(--title-color)",
+      },
+
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
     },
   },
-  plugins: [],
+  plugins: [daisyui],
 } satisfies Config;
