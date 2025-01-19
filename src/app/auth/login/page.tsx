@@ -58,7 +58,7 @@ export default function Login() {
                     </div>
 
                     <div className="absolute top-4 right-4 btn bg-primary text-background border-none">
-                        <Link href="/auth/login" className='flex items-center text-background text-lg'><IoIosArrowBack size={16} /> Home</Link>
+                        <Link href="/" className='flex items-center text-background text-lg'><IoIosArrowBack size={16} /> Home</Link>
                     </div>
                 </div>
 
