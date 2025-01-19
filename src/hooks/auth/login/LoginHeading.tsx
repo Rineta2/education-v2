@@ -12,7 +12,7 @@ import vector from "@/components/assets/register/vector.png"
 
 import frame from "@/components/assets/register/frame.png"
 
-export default function LoginHeader() {
+export default function LoginTestimonial() {
     return (
         <div className="flex sm:flex-col sm:gap-4 z-10 sm:justify-center">
             <div className="flex-col gap-5 sm:gap-7 hidden sm:flex max-w-[300px] sm:max-w-[400px] lg:max-w-[600px] 2xl:max-w-[700px] p-4 sm:p-0">

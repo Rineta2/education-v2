@@ -4,8 +4,6 @@ import Link from 'next/link'
 
 import { PiStudentFill, PiChalkboardTeacher } from "react-icons/pi"
 
-import LoginCard from '@/hooks/auth/login/LoginCard'
-
 export default function LoginOptions() {
     return (
         <div className="px-9 flex flex-col gap-6 p-6">
@@ -20,18 +18,27 @@ export default function LoginOptions() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-8 md:order-2 order-1">
-                <LoginCard
-                    href="/auth/login/siswa"
-                    icon={PiStudentFill}
-                    title="Siswa"
-                    description="Masuk sebagai siswa."
-                />
-                <LoginCard
-                    href="/auth/login/guru"
-                    icon={PiChalkboardTeacher}
-                    title="Guru"
-                    description="Masuk sebagai guru."
-                />
+                <Link href="/auth/login/siswa" className="p-6 border rounded-lg hover:shadow-lg transition-all flex items-center gap-4 lg:w-[500px]">
+                    <div className="w-[50px] h-[50px] bg-primary rounded-full flex items-center justify-center">
+                        <PiStudentFill className='text-background w-[25px] h-[25px]' />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <h3 className="font-semibold text-xl">Siswa</h3>
+                        <p className="text-gray-600">Masuk sebagai siswa.</p>
+                    </div>
+                </Link>
+
+                <Link href="/auth/login/guru" className="p-6 border rounded-lg hover:shadow-lg transition-all flex items-center gap-4 lg:w-[500px]">
+                    <div className="w-[50px] h-[50px] bg-primary rounded-full flex items-center justify-center">
+                        <PiChalkboardTeacher className='text-background w-[25px] h-[25px]' />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <h3 className="font-semibold text-xl">Guru</h3>
+                        <p className="text-gray-600">Masuk sebagai guru.</p>
+                    </div>
+                </Link>
             </div>
         </div>
     )
