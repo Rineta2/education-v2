@@ -72,7 +72,7 @@ export default function Header() {
                         </li>
                     ))}
 
-                    <Link href="/login" className="xl:ml-10 gap-5 btn bg-primary duration-300 px-10 hover:bg-primary/80 rounded-full grid place-items-center">
+                    <Link href="/auth/login" className="xl:ml-10 gap-5 btn bg-primary duration-300 px-10 hover:bg-primary/80 rounded-full grid place-items-center">
                         <span className='text-background text-lg'>Login</span>
                     </Link>
                 </ul>
@@ -138,7 +138,7 @@ export default function Header() {
                             ))}
                             <li className="pt-4">
                                 <Link
-                                    href="/login"
+                                    href="/auth/login"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="block w-full btn bg-primary text-center duration-300 py-3 hover:bg-primary/90 rounded-full"
                                 >

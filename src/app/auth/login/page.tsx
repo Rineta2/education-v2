@@ -58,7 +58,7 @@ export default function Login() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 mt-8">
-                        <Link href="/auth/register/siswa" className="p-6 border rounded-lg hover:shadow-lg transition-all flex items-center gap-4 w-[500px]">
+                        <Link href="/auth/login/siswa" className="p-6 border rounded-lg hover:shadow-lg transition-all flex items-center gap-4 w-[500px]">
                             <div className="w-[50px] h-[50px] bg-primary rounded-full flex items-center justify-center">
                                 <PiStudentFill className='text-background w-[25px] h-[25px]' />
                             </div>
