@@ -1,8 +1,8 @@
 import React from 'react'
 
-import LoginHeading from '@/hooks/auth/login/LoginHeading'
+import LoginHeading from '../../../hooks/auth/login/LoginHeading'
 
-import LoginOptions from '@/hooks/auth/login/LoginOptions'
+import LoginOptions from '../../../hooks/auth/login/LoginOptions'
 
 export default function Login() {
     return (

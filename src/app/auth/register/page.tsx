@@ -1,10 +1,10 @@
 import React from 'react'
 
-import RegisterHeading from '@/hooks/auth/register/RegisterHeading'
+import RegisterHeading from '../../../hooks/auth/register/RegisterHeading'
 
-import RegisterOptions from '@/hooks/auth/register/RegisterOptions'
+import RegisterOptions from '../../../hooks/auth/register/RegisterOptions'
 
-import HomeButton from '@/hooks/auth/register/HomeButton'
+import HomeButton from '../../../hooks/auth/register/HomeButton'
 
 export default function Register() {
     return (
