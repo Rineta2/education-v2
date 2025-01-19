@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { Analytics, getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
@@ -15,7 +15,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Initialize analytics conditionally
+let analytics: Analytics | null = null;
+if (typeof window !== "undefined") {
+  // We're in the browser environment
+  isSupported().then((yes) => yes && (analytics = getAnalytics(app)));
+}
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 const database = getDatabase(app);
