@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { guruSchema } from "./Schema"
+import { guruSchema } from "@/hooks/schema/register/guru/Schema"
 
 import { auth, db } from '@/utils/firebase'
 
@@ -32,7 +32,7 @@ import { FirebaseError } from 'firebase/app'
 
 import { toast } from 'react-hot-toast'
 
-import { GuruInterface } from './Interface'
+import { GuruInterface } from "@/hooks/schema/register/guru/Interface"
 
 import imageCompression from 'browser-image-compression';
 

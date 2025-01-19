@@ -1,4 +1,4 @@
-import { GuruInterface } from "./Interface";
+import { GuruInterface } from "@/hooks/schema/register/guru/Interface";
 
 import * as z from "zod";
 
