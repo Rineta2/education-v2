@@ -94,7 +94,7 @@ export default function Guru() {
                                 className='lg:block sm:w-[50px] sm:h-[50px]'
                             />
 
-                            <h4 className='text-background text-[14px] sm:text-[16px] md:text-lg font-bold' style={{
+                            <h4 className='text-background text-[14px] sm:text-[16px] md:text-lg lg:text-xl font-bold' style={{
                                 lineHeight: '1.8'
                             }}>
                                 The passage experienced a surge in popularity during the 1960s when Letraset used it on their dry-transfer sheets, and again during the 90s as desktop publishers bundled the text with their software.
@@ -119,15 +119,14 @@ export default function Guru() {
                             />
                         </div>
                     </div>
+
+                    <div className="absolute top-4 right-4 btn bg-primary text-background border-none">
+                        <Link href="/auth/login" className='flex items-center text-background text-lg'><IoIosArrowBack size={16} /> Back</Link>
+                    </div>
                 </div>
 
                 {/* Form */}
-                <div className="flex flex-col gap-2 px-4 sm:px-9 py-4 sm:py-6 justify-center">
-                    <div className="flex justify-end items-center gap-2 sm:mb-[80px]">
-                        <h3 className='text-gray-600 text-[14px] sm:text-[16px]'><IoIosArrowBack /></h3>
-                        <Link href="/auth/login" className='text-primary text-[14px] sm:text-[16px]'>Back</Link>
-                    </div>
-
+                <div className="flex flex-col sm:gap-4 gap-5 px-4 sm:px-9 py-4 sm:py-6 justify-center">
                     <div className="flex flex-col gap-2 items-center justify-center w-full mb-6 sm:mb-10">
                         <h3 className="text-2xl sm:text-4xl font-bold mb-2">Login Guru</h3>
                         <p className="text-gray-600 text-[12px] sm:text-[14px] text-center px-2">Masukkan email dan password anda untuk masuk ke dalam sistem.</p>

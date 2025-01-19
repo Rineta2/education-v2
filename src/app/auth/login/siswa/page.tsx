@@ -80,95 +80,96 @@ export default function Siswa() {
     };
 
     return (
-        <section className='min-h-screen flex relative'>
-            <div className='container mx-auto px-5 py-4 grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <div className="flex flex-col gap-4 z-10 justify-center">
+        <section className='min-h-screen flex items-center justify-center relative'>
+            <div className='container mx-auto px-3 sm:px-5 py-4 grid grid-cols-1 md:grid-cols-2 sm:gap-6 pl-0 sm:pl-0'>
+                <div className="flex sm:flex-col sm:gap-4 z-10 sm:justify-center">
                     {/* Title */}
-                    <div className="relative flex flex-col gap-7 max-w-[700px]">
-                        <Image
-                            src={quete}
-                            alt='quete'
-                            width={50}
-                            height={50}
-                        />
+                    <div className="flex-col gap-5 sm:gap-7 hidden sm:flex max-w-[300px] sm:max-w-[400px] lg:max-w-[600px] 2xl:max-w-[700px] p-4 sm:p-0">
+                        <div className="relative flex flex-col gap-5 sm:gap-7">
+                            <Image
+                                src={quete}
+                                alt='quete'
+                                width={40}
+                                height={40}
+                                className='lg:block sm:w-[50px] sm:h-[50px]'
+                            />
 
-                        <h4 className='text-background text-xl md:text-2xl font-bold' style={{
-                            lineHeight: '2'
-                        }}>
-                            The passage experienced a surge in popularity during the 1960s when Letraset used it on their dry-transfer sheets, and again during the 90s as desktop publishers bundled the text with their software.
-                        </h4>
+                            <h4 className='text-background text-[14px] sm:text-[16px] md:text-lg lg:text-xl font-bold' style={{
+                                lineHeight: '1.8'
+                            }}>
+                                The passage experienced a surge in popularity during the 1960s when Letraset used it on their dry-transfer sheets, and again during the 90s as desktop publishers bundled the text with their software.
+                            </h4>
 
+                            <h3 className='text-background text-lg sm:text-xl md:text-2xl font-bold'>Vincent Obi</h3>
 
-                        <h3 className='text-background text-xl md:text-2xl font-bold'>Vincent Obi</h3>
+                            <Image
+                                src={vector}
+                                alt='vector'
+                                width={40}
+                                height={40}
+                                className='lg:block absolute bottom-0 right-6'
+                            />
+                        </div>
 
-                        <Image
-                            src={vector}
-                            alt='vector'
-                            width={50}
-                            height={50}
-                            className='absolute bottom-0 right-6'
-                        />
+                        <div className="absolute inset-0 w-full md:w-[50%] h-full z-[-1] lg:block" >
+                            <Image
+                                src={frame}
+                                alt='background frame'
+                                className='object-cover w-full h-full'
+                            />
+                        </div>
+                    </div>
+
+                    <div className="absolute top-4 right-4 btn bg-primary text-background border-none">
+                        <Link href="/auth/login" className='flex items-center text-background text-lg'><IoIosArrowBack size={16} /> Back</Link>
                     </div>
                 </div>
 
                 {/* Form */}
 
-                <div className="flex flex-col gap-2 px-9 py-6 justify-center">
-                    <div className="flex justify-end items-center gap-2 mb-[50px]">
-                        <h3 className='text-gray-600 text-[16px]'><IoIosArrowBack /></h3>
-                        <Link href="/auth/login" className='text-primary text-[16px]'>Back</Link>
+                <div className="flex flex-col sm:gap-4 gap-5 px-4 sm:px-9 py-4 sm:py-6 justify-center">
+                    <div className="flex flex-col gap-2 items-center justify-center w-full mb-6 sm:mb-10">
+                        <h3 className="text-2xl sm:text-4xl font-bold mb-2">Login Siswa</h3>
+                        <p className="text-gray-600 text-[12px] sm:text-[14px] text-center px-2">Masukkan email dan password anda untuk masuk ke dalam sistem.</p>
                     </div>
 
-                    <div className="flex flex-col gap-2 items-center justify-center w-full mb-10">
-                        <h3 className="text-5xl font-bold mb-2">Login Siswa</h3>
-                        <p className="text-gray-600 text-[16px]">Masukkan email dan password anda untuk masuk ke dalam sistem.</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-8 w-full'>
-                        <div className="lg:w-[85%] 2xl:w-[70%] mx-auto">
+                    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 sm:gap-8 w-full'>
+                        <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
                             {errors.email && (
-                                <p className="text-red-500 text-[14px] mb-2">{errors.email.message}</p>
+                                <p className="text-red-500 text-[12px] sm:text-[14px] mb-2">{errors.email.message}</p>
                             )}
 
                             <input
                                 type="email"
                                 {...register('email')}
-                                className='input input-bordered w-full h-[50px] bg-white border-gray-300'
+                                className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                                 placeholder='Email'
                             />
                         </div>
 
-                        <div className="lg:w-[85%] 2xl:w-[70%] mx-auto">
+                        <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
                             {errors.password && (
-                                <p className="text-red-500 text-[14px] mb-2">{errors.password.message}</p>
+                                <p className="text-red-500 text-[12px] sm:text-[14px] mb-2">{errors.password.message}</p>
                             )}
 
                             <input
                                 type="password"
                                 {...register('password')}
-                                className='input input-bordered w-full h-[50px] bg-white border-gray-300'
+                                className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                                 placeholder='Password'
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className='btn btn-primary h-[50px] mx-auto lg:w-[85%] 2xl:w-[70%]'
+                            className='btn btn-primary text-background text-lg sm:text-xl w-full lg:w-[85%] 2xl:w-[70%] h-[45px] sm:h-[50px] mx-auto' style={{
+                                letterSpacing: '2px'
+                            }}
                         >
                             Login
                         </button>
                     </form>
                 </div>
-
-            </div>
-
-            <div className="absolute inset-0 w-[50%] h-screen">
-                <Image
-                    src={frame}
-                    alt='background frame'
-                    fill
-                    className='object-cover'
-                />
             </div>
         </section>
     )
