@@ -29,7 +29,7 @@ export default function Annount() {
                             <div className='p-2 rounded-full bg-background/10 group-hover:bg-background/20'>
                                 <MapPin className='w-4 h-4 md:w-5 md:h-5' />
                             </div>
-                            <p className='text-sm md:text-base'>Jl. Raya Kediri, Kediri, Jawa Timur</p>
+                            <p className='text-sm md:text-base'>Makassar, Sulawesi Selatan</p>
                         </a>
                     </div>
 
