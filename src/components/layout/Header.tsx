@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+
 import Image from 'next/image'
 
 import React, { useState } from 'react'
@@ -29,10 +30,15 @@ export default function Header() {
 
     const pathname = usePathname()
 
+    // Function to format role string (replace underscores with hyphens)
+    const formatRole = (role: string | undefined) => {
+        return role?.replace(/_/g, '-') || '';
+    };
+
     // Function to get dashboard URL based on user role
     const getDashboardUrl = () => {
         if (!accounts?.role) return '/';
-        return `/${accounts.role}/dashboard`;
+        return `/${formatRole(accounts.role)}/dashboard`;
     };
 
 
@@ -129,7 +135,7 @@ export default function Header() {
                                 </li>
                                 <li>
                                     <Link
-                                        href={`/${accounts?.role}/profile`}
+                                        href={`/${formatRole(accounts?.role)}/profile`}
                                         className="block px-4 py-2 text-sm text-title hover:bg-gray-100"
                                     >
                                         Profile
@@ -246,7 +252,7 @@ export default function Header() {
                                             Dashboard
                                         </Link>
                                         <Link
-                                            href={`${accounts?.role}/profile`}
+                                            href={`${formatRole(accounts?.role)}/profile`}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                             className="block w-full text-[16px] font-medium text-title hover:text-primary"
                                         >

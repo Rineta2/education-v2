@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (currentPath === '/auth/login' || currentPath === '/') {
                 switch (parsedUser.role) {
                     case "super_admin":
-                        router.push("/super-admin/dashboard");
+                        router.push("/super-admins/dashboard");
                         break;
                     case "admin":
                         router.push("/admin/dashboard");
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         switch (userData.role) {
             case "super_admin":
                 toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
-                router.push("/super-admin/dashboard");
+                router.push("/super-admins/dashboard");
                 break;
             case "admin":
                 toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
