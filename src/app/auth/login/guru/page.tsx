@@ -18,8 +18,11 @@ import { LoginHero } from '@/hooks/auth/login/guru/LoginHero'
 
 import { BackButton } from '@/hooks/auth/login/guru/BackButton'
 
+import { useAuth } from '@/utils/auth/AuthContext'
+
 export default function Guru() {
     const router = useRouter();
+    const { login } = useAuth();
     const {
         register,
         handleSubmit,
@@ -29,7 +32,7 @@ export default function Guru() {
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        await handleGuruLogin(data, router);
+        await handleGuruLogin(data, router, login);
     };
 
     return (

@@ -21,6 +21,8 @@ export const metadata: Metadata = {
 
 import Route from "@/components/route/route";
 
+import Providers from "@/utils/auth/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +33,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans`}
       >
-        <Route>{children}</Route>
+        <Providers>
+          <Route>
+            {children}
+          </Route>
+        </Providers>
       </body>
     </html>
   );

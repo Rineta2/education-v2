@@ -12,9 +12,12 @@ import { FirebaseAuthError } from "@/hooks/schema/login/Interface";
 
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
+import { User } from "@/utils/auth/schema/interface";
+
 export const handleGuruLogin = async (
   data: LoginFormValues,
-  router: AppRouterInstance
+  router: AppRouterInstance,
+  loginCallback: (userData: User) => void
 ) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -25,24 +28,30 @@ export const handleGuruLogin = async (
 
     if (userCredential.user) {
       const userDoc = await getDoc(
-        doc(
-          db,
-          process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string,
-          userCredential.user.uid
-        )
+        doc(db, "accounts", userCredential.user.uid)
       );
-      const userData = userDoc.data();
 
-      if (userData?.role === "guru") {
-        toast.success("Login berhasil!");
-        router.push("/dashboard/guru");
-      } else {
-        await signOut(auth);
-        toast.error("Akses ditolak. Anda bukan guru.");
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        if (userData?.role === "guru") {
+          const userDataForAuth = {
+            id: userCredential.user.uid,
+            namaLengkap: userData.namaLengkap,
+            profilePicture: userData.profilePicture || null,
+            role: userData.role,
+            email: userData.email
+          } as User;
+
+          loginCallback(userDataForAuth);
+        } else {
+          await signOut(auth);
+          toast.error("Akses ditolak. Anda bukan guru.");
+        }
       }
     }
   } catch (error: unknown) {
-    console.error(error);
+    console.error("Login error:", error);
     if (error && typeof error === "object" && "code" in error) {
       const firebaseError = error as FirebaseAuthError;
       if (firebaseError.code === "auth/invalid-credential") {
