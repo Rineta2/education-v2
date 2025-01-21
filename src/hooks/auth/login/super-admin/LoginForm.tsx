@@ -1,11 +1,10 @@
 import { LoginFormValues } from '@/hooks/schema/login/Schema'
-
-import { FieldErrors, UseFormRegister } from 'react-hook-form'
+import { FieldErrors, UseFormRegister, SubmitHandler } from 'react-hook-form'
 
 interface SuperAdminLoginFormProps {
     register: UseFormRegister<LoginFormValues>
     errors: FieldErrors<LoginFormValues>
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+    onSubmit: SubmitHandler<LoginFormValues>
 }
 
 export const SuperAdminLoginForm = ({ register, errors, onSubmit }: SuperAdminLoginFormProps) => {
@@ -18,7 +17,14 @@ export const SuperAdminLoginForm = ({ register, errors, onSubmit }: SuperAdminLo
                 </p>
             </div>
 
-            <form onSubmit={onSubmit} className='flex flex-col gap-6 sm:gap-8 w-full'>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                onSubmit({
+                    email: formData.get('email') as string,
+                    password: formData.get('password') as string,
+                });
+            }} className='flex flex-col gap-6 sm:gap-8 w-full'>
                 <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
                     {errors.email && (
                         <p className="text-red-500 text-[12px] sm:text-[14px] mb-2">{errors.email.message}</p>

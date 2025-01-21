@@ -4,7 +4,7 @@ import React from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -25,16 +25,16 @@ export default function SuperAdminLogin() {
     const { login } = useAuth();
     const {
         register,
-        handleSubmit,
         formState: { errors }
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema)
     });
 
-    const onSubmit = async (data: LoginFormValues) => {
-        const success = await handleSuperAdminLogin(data, router, login);
-        if (success) {
-            return;
+    const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+        try {
+            await handleSuperAdminLogin(data, router, login);
+        } catch (error) {
+            console.error('Login error:', error);
         }
     };
 
@@ -49,7 +49,7 @@ export default function SuperAdminLogin() {
                 <SuperAdminLoginForm
                     register={register}
                     errors={errors}
-                    onSubmit={handleSubmit(onSubmit)}
+                    onSubmit={onSubmit}
                 />
             </div>
         </section>

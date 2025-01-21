@@ -36,7 +36,7 @@ export const handleSuperAdminLogin = async (
             );
             const userData = userDoc.data();
 
-            if (userData?.role === "super_admins") {
+            if (userData?.role === process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN) {
                 loginCallback(userData as User);
                 return true;
             } else {
