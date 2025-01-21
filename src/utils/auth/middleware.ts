@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
@@ -7,9 +6,29 @@ export async function middleware(request: NextRequest) {
   const authToken = request.cookies.get("authToken")?.value;
   const userRole = request.cookies.get("userRole")?.value;
 
+  // Debug logs (hapus di produksi jika tidak diperlukan)
+  console.log("Current Pathname:", pathname);
+  console.log("authToken:", authToken);
+  console.log("userRole:", userRole);
+  console.log("Environment Variables:", {
+    superAdmin: process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN,
+    admin: process.env.NEXT_PUBLIC_ROLE_ADMIN,
+    guru: process.env.NEXT_PUBLIC_ROLE_GURU,
+    siswa: process.env.NEXT_PUBLIC_ROLE_SISWA,
+  });
+
   // Public routes that don't need authentication
   const publicRoutes = ["/auth/login", "/auth/register", "/"];
   if (publicRoutes.includes(pathname)) {
+    // Clean query parameters for public routes (if any exist)
+    const params = request.nextUrl.searchParams;
+    if (params.has("email") || params.has("password")) {
+      const cleanUrl = new URL(request.url);
+      cleanUrl.searchParams.delete("email");
+      cleanUrl.searchParams.delete("password");
+      return NextResponse.redirect(cleanUrl);
+    }
+
     // If user is already logged in, redirect to their dashboard
     if (authToken) {
       return NextResponse.redirect(
@@ -22,16 +41,20 @@ export async function middleware(request: NextRequest) {
   // Redirect to login if not authenticated
   if (!authToken || !userRole) {
     const loginUrl = new URL("/auth/login", request.url);
-    // Add the attempted URL as a query parameter to redirect back after login
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    if (!pathname.startsWith("/auth")) {
+      // Add the attempted URL as a callback parameter to redirect back after login
+      loginUrl.searchParams.set("callbackUrl", pathname);
+    }
     return NextResponse.redirect(loginUrl);
   }
 
   try {
-    // Protected routes based on roles
+    // Role-based route protection
     if (pathname.startsWith("/super-admins")) {
       if (userRole !== process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN) {
-        console.log(`Unauthorized access: ${userRole} trying to access super-admins`);
+        console.log(
+          `Unauthorized access: ${userRole} trying to access super-admins`
+        );
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     }
@@ -60,10 +83,11 @@ export async function middleware(request: NextRequest) {
     // Handle root dashboard redirect
     if (pathname === "/dashboard") {
       const dashboardUrls = {
-        [process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN as string]: "/super-admins/dashboard",
+        [process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN as string]:
+          "/super-admins/dashboard",
         [process.env.NEXT_PUBLIC_ROLE_ADMIN as string]: "/admins/dashboard",
         [process.env.NEXT_PUBLIC_ROLE_GURU as string]: "/guru/dashboard",
-        [process.env.NEXT_PUBLIC_ROLE_SISWA as string]: "/siswa/dashboard"
+        [process.env.NEXT_PUBLIC_ROLE_SISWA as string]: "/siswa/dashboard",
       };
 
       const redirectUrl = dashboardUrls[userRole as keyof typeof dashboardUrls];
