@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
+
 import type { NextConfig } from "next";
+
 import bundleAnalyzer from "@next/bundle-analyzer";
 
 interface PathData {
@@ -28,17 +30,26 @@ const nextConfig: NextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      config.entry = {
-        ...config.entry,
-        'sw': './public/sw.ts',
+      const entry = typeof config.entry === 'function'
+        ? config.entry()
+        : config.entry;
+
+      config.entry = async () => {
+        const entries = await entry;
+        return {
+          ...entries,
+          'sw': './public/sw.ts',
+        };
       };
 
-      config.output = {
-        ...config.output,
-        filename: (pathData: PathData) => {
-          return pathData.chunk.name === 'sw' ? 'sw.js' : config.output?.filename;
-        },
-      };
+      if (config.output) {
+        config.output.filename = (pathData: PathData) => {
+          return pathData.chunk.name === 'sw' ? 'sw.js' :
+            (typeof config.output?.filename === 'string'
+              ? config.output.filename
+              : '[name].js');
+        };
+      }
     }
     return config;
   },
