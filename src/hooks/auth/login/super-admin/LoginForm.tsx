@@ -35,10 +35,10 @@ export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginF
         return true
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (validateForm()) {
-            await onSubmit(email, password)
+            onSubmit(email, password)
         }
     }
 
@@ -51,12 +51,7 @@ export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginF
                 </p>
             </div>
 
-            <form
-                onSubmit={handleSubmit}
-                className='flex flex-col gap-6 sm:gap-8 w-full'
-                noValidate
-                autoComplete="off"
-            >
+            <form onSubmit={handleSubmit} className='flex flex-col gap-6 sm:gap-8 w-full'>
                 <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
                     <input
                         type="email"
@@ -65,7 +60,6 @@ export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginF
                         className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                         placeholder='Email'
                         disabled={isSubmitting}
-                        required
                     />
                 </div>
 
@@ -76,9 +70,7 @@ export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginF
                         onChange={(e) => setPassword(e.target.value)}
                         className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                         placeholder='Password'
-                        autoComplete="new-password"
                         disabled={isSubmitting}
-                        required
                     />
                 </div>
 
