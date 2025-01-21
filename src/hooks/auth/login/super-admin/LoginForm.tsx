@@ -1,88 +1,84 @@
-import { useState } from 'react'
-import { toast } from 'react-hot-toast'
+import React, { useState } from 'react';
+import { auth } from '@/utils/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/utils/auth/AuthContext';
+import { User } from '@/utils/auth/schema/interface';
 
-interface SuperAdminLoginFormProps {
-    onSubmit: (email: string, password: string) => Promise<void>
-    isSubmitting: boolean
-}
+export default function LoginForm() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const { login } = useAuth();
 
-export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginFormProps) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-    const validateForm = () => {
-        if (!email) {
-            toast.error('Email wajib diisi')
-            return false
+            // Create user data object with correct role type
+            const userData: User = {
+                id: user.uid,
+                email: user.email!,
+                role: 'super_admins', // Using the literal type instead of env variable
+                namaLengkap: user.displayName || 'Super Admin',
+            };
+
+            // Use AuthContext login
+            login(userData);
+        } catch (err) {
+            setError('Invalid email or password');
+            console.error(err);
         }
-
-        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-        if (!emailRegex.test(email)) {
-            toast.error('Email tidak valid')
-            return false
-        }
-
-        if (!password) {
-            toast.error('Password wajib diisi')
-            return false
-        }
-
-        if (password.length < 6) {
-            toast.error('Password minimal 6 karakter')
-            return false
-        }
-
-        return true
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if (validateForm()) {
-            onSubmit(email, password)
-        }
-    }
+    };
 
     return (
-        <div className="flex flex-col sm:gap-4 gap-5 px-4 sm:px-9 py-4 sm:py-6 justify-center">
-            <div className="flex flex-col gap-2 items-center justify-center w-full mb-6 sm:mb-10">
-                <h3 className="text-2xl sm:text-4xl font-bold mb-2">Login Super Admin</h3>
-                <p className="text-gray-600 text-[12px] sm:text-[14px] text-center px-2">
-                    Masukkan email dan password anda untuk masuk ke dalam sistem.
-                </p>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Super Admin Login
+                    </h2>
+                </div>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="text-red-500 text-center text-sm">
+                            {error}
+                        </div>
+                    )}
+                    <div className="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <input
+                                type="email"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="password"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Sign in
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <form onSubmit={handleSubmit} className='flex flex-col gap-6 sm:gap-8 w-full'>
-                <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
-                        placeholder='Email'
-                        disabled={isSubmitting}
-                    />
-                </div>
-
-                <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
-                        placeholder='Password'
-                        disabled={isSubmitting}
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className='btn btn-primary text-background text-lg sm:text-xl w-full lg:w-[85%] 2xl:w-[70%] h-[45px] sm:h-[50px] mx-auto'
-                    style={{ letterSpacing: '2px' }}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Loading...' : 'Login'}
-                </button>
-            </form>
         </div>
-    )
+    );
 }
