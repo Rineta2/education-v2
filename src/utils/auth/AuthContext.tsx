@@ -49,19 +49,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Gunakan router.replace alih-alih router.push untuk menghindari history
         switch (userData.role) {
-            case process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN:
+            case "super_admins":
                 router.replace("/super-admins/dashboard");
                 toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
                 break;
-            case process.env.NEXT_PUBLIC_ROLE_ADMIN:
+            case "admins":
                 toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
                 router.push("/admins/dashboard");
                 break;
-            case process.env.NEXT_PUBLIC_ROLE_GURU:
+            case "guru":
                 toast.success(`Selamat datang Guru ${userData.namaLengkap}!`);
                 router.push("/guru/dashboard");
                 break;
-            case process.env.NEXT_PUBLIC_ROLE_SISWA:
+            case "siswa":
                 toast.success(`Selamat datang Siswa ${userData.namaLengkap}!`);
                 router.push("/siswa/dashboard");
                 break;
