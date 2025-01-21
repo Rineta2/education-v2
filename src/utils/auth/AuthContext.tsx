@@ -47,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(true);
         Cookies.set(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!, JSON.stringify(userData), { expires: 7 });
 
-        // Gunakan router.replace alih-alih router.push untuk menghindari history
         switch (userData.role) {
             case "super_admins":
                 router.replace("/super-admins/dashboard");
