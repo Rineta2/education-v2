@@ -4,7 +4,7 @@ import React from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -21,16 +21,13 @@ import { BackButton } from '@/hooks/auth/login/guru/BackButton'
 import { useAuth } from '@/utils/auth/AuthContext'
 
 export default function SuperAdminLogin() {
-    const router = useRouter();
-    const { login } = useAuth();
-    const {
-        register,
-        formState: { errors }
-    } = useForm<LoginFormValues>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema)
     });
+    const router = useRouter();
+    const { login } = useAuth();
 
-    const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+    const onSubmit = async (data: LoginFormValues) => {
         try {
             await handleSuperAdminLogin(data, router, login);
         } catch (error) {
@@ -48,6 +45,7 @@ export default function SuperAdminLogin() {
 
                 <SuperAdminLoginForm
                     register={register}
+                    handleSubmit={handleSubmit}
                     errors={errors}
                     onSubmit={onSubmit}
                 />
