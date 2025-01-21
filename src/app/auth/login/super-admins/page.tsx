@@ -32,7 +32,10 @@ export default function SuperAdminLogin() {
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        await handleSuperAdminLogin(data, router, login);
+        const success = await handleSuperAdminLogin(data, router, login);
+        if (success) {
+            return;
+        }
     };
 
     return (

@@ -42,6 +42,7 @@ export const handleSuperAdminLogin = async (
             } else {
                 await signOut(auth);
                 toast.error("Akses ditolak. Anda bukan super admin.");
+                router.replace('/auth/login/super-admins');
                 return false;
             }
         }
@@ -56,6 +57,7 @@ export const handleSuperAdminLogin = async (
                 toast.error("Terjadi kesalahan saat login");
             }
         }
+        router.replace('/auth/login/super-admins');
         return false;
     }
 };
