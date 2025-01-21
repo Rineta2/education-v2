@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { auth } from '@/utils/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useAuth } from '@/utils/auth/AuthContext';
-import { User } from '@/utils/auth/schema/interface';
+import React, { useState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { auth } from '@/utils/firebase';
+
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+import { useAuth } from '@/utils/auth/AuthContext';
+
+import { User } from '@/utils/auth/schema/interface';
+
 import { FirebaseError } from 'firebase/app';
 
 export default function LoginForm() {
@@ -11,8 +17,15 @@ export default function LoginForm() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
     const router = useRouter();
+
+    useEffect(() => {
+        // Redirect if already authenticated
+        if (isAuthenticated) {
+            router.replace('/super-admins/dashboard');
+        }
+    }, [isAuthenticated, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,6 +43,7 @@ export default function LoginForm() {
             };
 
             await login(userData);
+            // Force navigation after successful login
             router.replace('/super-admins/dashboard');
         } catch (err: unknown) {
             console.error(err);
