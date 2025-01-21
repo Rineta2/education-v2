@@ -2,8 +2,6 @@
 
 import React, { useState, useMemo } from 'react'
 
-import ReactPaginate from 'react-paginate'
-
 import { useAdmins } from '@/utils/lib/super-admins/admins/useAdmins'
 
 import { useAdminManagement } from '@/app/super-admins/dashboard/admins/components/utils/useAdminManagement'
@@ -15,6 +13,8 @@ import { DeleteConfirmationModal } from '@/app/super-admins/dashboard/admins/com
 import { AdminTable } from '@/app/super-admins/dashboard/admins/components/Table'
 
 import { SearchBar } from '@/app/super-admins/dashboard/admins/components/SearchBar'
+
+import { Pagination } from '@/app/super-admins/dashboard/admins/components/Pagination'
 
 export default function Admins() {
     const { admins, isLoading } = useAdmins()
@@ -52,8 +52,8 @@ export default function Admins() {
     const offset = currentPage * itemsPerPage
     const currentItems = filteredAdmins.slice(offset, offset + itemsPerPage)
 
-    const handlePageChange = ({ selected }: { selected: number }) => {
-        setCurrentPage(selected)
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
     }
 
     return (
@@ -90,21 +90,11 @@ export default function Admins() {
                     handleDelete={handleDelete}
                 />
 
-                {/* Pagination */}
-                <div className="mt-8 flex justify-center">
-                    <ReactPaginate
-                        previousLabel="Previous"
-                        nextLabel="Next"
-                        pageCount={pageCount}
-                        onPageChange={handlePageChange}
-                        containerClassName="flex items-center gap-2"
-                        previousClassName="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50"
-                        nextClassName="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50"
-                        pageClassName="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50"
-                        activeClassName="!bg-blue-600 !text-white !border-blue-600"
-                        disabledClassName="opacity-50 cursor-not-allowed"
-                    />
-                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    pageCount={pageCount}
+                    onPageChange={handlePageChange}
+                />
 
                 <AdminFormModal
                     isOpen={isModalOpen}
