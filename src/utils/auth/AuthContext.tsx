@@ -15,38 +15,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const router = useRouter();
 
-    // Wrap checkAuthStatus in useCallback
     const checkAuthStatus = useCallback(() => {
         const userData = Cookies.get(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!);
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setAccounts(parsedUser);
             setIsAuthenticated(true);
-
-            // Get current path
-            const currentPath = window.location.pathname;
-
-            // Only redirect if user is on login page or root
-            if (currentPath === '/auth/login' || currentPath === '/') {
-                switch (parsedUser.role) {
-                    case "super_admins":
-                        router.push("/super-admins/dashboard");
-                        break;
-                    case "admins":
-                        router.push("/admin/dashboard");
-                        break;
-                    case "guru":
-                        router.push("/guru/dashboard");
-                        break;
-                    case "siswa":
-                        router.push("/siswa/dashboard");
-                        break;
-                }
-            }
+            return parsedUser;
+        } else {
+            setAccounts(null);
+            setIsAuthenticated(false);
+            return null;
         }
-    }, [router]); // Add router as dependency
+    }, []);
 
-    // Update useEffect to include checkAuthStatus in dependencies
+    const checkRole = useCallback((allowedRole: string) => {
+        const userData = checkAuthStatus();
+        if (!userData || userData.role !== allowedRole) {
+            router.push("/");
+            return false;
+        }
+        return true;
+    }, [checkAuthStatus, router]);
+
     useEffect(() => {
         checkAuthStatus();
     }, [checkAuthStatus]);
@@ -89,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ accounts, login, logout, isAuthenticated }}>
+        <AuthContext.Provider value={{ accounts, login, logout, isAuthenticated, checkRole }}>
             {children}
         </AuthContext.Provider>
     );

@@ -14,16 +14,19 @@ import { Toaster } from "react-hot-toast";
 
 export default function Route({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-
     const isAuth = pathname.includes("auth");
+    const isSuperAdmin = pathname.includes("super-admins");
+    const isAdmin = pathname.includes("admin");
+    const isGuru = pathname.includes("guru");
+    const isSiswa = pathname.includes("siswa");
 
     return (
         <Fragment>
             <Toaster position="top-center" />
-            {!isAuth && <Annount />}
-            {!isAuth && <Header />}
+            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Annount />}
+            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Header />}
             {children}
-            {!isAuth && <Footer />}
+            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Footer />}
         </Fragment>
     );
 }

@@ -37,7 +37,6 @@ export const handleSuperAdminLogin = async (
             const userData = userDoc.data();
 
             if (userData?.role === "super_admins") {
-                toast.success("Login berhasil!");
                 loginCallback(userData as User);
                 return true;
             } else {

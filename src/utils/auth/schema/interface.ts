@@ -17,6 +17,7 @@ export interface AuthContextType {
   login: (userData: User) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  checkRole: (allowedRole: string) => boolean;
 }
 
 // Providers Props
