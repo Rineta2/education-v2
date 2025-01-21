@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useCallback } from "react";
 
 import Header from "@/components/layout/Header";
 
@@ -12,6 +12,8 @@ import Annount from "@/components/layout/Annount";
 
 import { Toaster } from "react-hot-toast";
 
+import { useNotification } from "@/hooks/useNotification";
+
 export default function Route({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAuth = pathname.includes("auth");
@@ -19,6 +21,22 @@ export default function Route({ children }: { children: React.ReactNode }) {
     const isAdmin = pathname.includes("admin");
     const isGuru = pathname.includes("guru");
     const isSiswa = pathname.includes("siswa");
+
+    const { requestPermission, subscribeToNotifications, checkNotificationStatus } = useNotification();
+
+    const setupNotifications = useCallback(async () => {
+        const status = await checkNotificationStatus();
+        if (status.supported && !status.subscriptionActive) {
+            const granted = await requestPermission();
+            if (granted) {
+                await subscribeToNotifications();
+            }
+        }
+    }, [checkNotificationStatus, requestPermission, subscribeToNotifications]);
+
+    useEffect(() => {
+        setupNotifications();
+    }, [setupNotifications]);
 
     return (
         <Fragment>
