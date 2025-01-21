@@ -95,6 +95,17 @@ export default function Login() {
                                 <p className="text-gray-600">Masuk sebagai guru.</p>
                             </div>
                         </Link>
+
+                        <Link href="/auth/login/super-admins" className="p-6 border rounded-lg hover:shadow-lg transition-all flex items-center gap-4 lg:w-[500px]">
+                            <div className="w-[50px] h-[50px] bg-primary rounded-full flex items-center justify-center">
+                                <PiChalkboardTeacher className='text-background w-[25px] h-[25px]' />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <h3 className="font-semibold text-xl">Super Admin</h3>
+                                <p className="text-gray-600">Masuk sebagai super admin.</p>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>

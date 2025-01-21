@@ -29,10 +29,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Only redirect if user is on login page or root
             if (currentPath === '/auth/login' || currentPath === '/') {
                 switch (parsedUser.role) {
-                    case "super_admin":
+                    case "super_admins":
                         router.push("/super-admins/dashboard");
                         break;
-                    case "admin":
+                    case "admins":
                         router.push("/admin/dashboard");
                         break;
                     case "guru":
@@ -58,13 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Show welcome message based on user role
         switch (userData.role) {
-            case "super_admin":
-                toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
+            case "super_admins":
                 router.push("/super-admins/dashboard");
+                toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
                 break;
-            case "admin":
+            case "admins":
                 toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
-                router.push("/admin/dashboard");
+                router.push("/admins/dashboard");
                 break;
             case "guru":
                 toast.success(`Selamat datang Guru ${userData.namaLengkap}!`);
@@ -85,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Remove user data from cookies
         Cookies.remove(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!);
         toast.success("Anda telah berhasil logout!");
+        router.push('/');
     };
 
     return (

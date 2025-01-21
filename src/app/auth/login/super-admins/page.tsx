@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { loginSchema, type LoginFormValues } from '@/hooks/schema/login/Schema'
 
-import { handleSuperAdminLogin } from '@/hooks/schema/login/super-admin/superAdminAuth'
+import { handleSuperAdminLogin } from '@/hooks/schema/login/super-admins/superAdminAuth'
 
 import { SuperAdminLoginForm } from '@/hooks/auth/login/super-admin/LoginForm'
 

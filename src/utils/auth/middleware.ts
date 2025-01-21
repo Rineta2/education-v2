@@ -4,95 +4,93 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const accounts = request.cookies.get(
-    process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!
-  )?.value;
+  const authToken = request.cookies.get("authToken")?.value;
+  const userRole = request.cookies.get("userRole")?.value;
 
   // Public routes that don't need authentication
-  const publicRoutes = ["/auth/login", "/auth/register"];
+  const publicRoutes = ["/auth/login", "/auth/register", "/"];
   if (publicRoutes.includes(pathname)) {
     // If user is already logged in, redirect to their dashboard
-    if (accounts) {
-      const userData = JSON.parse(accounts);
+    if (authToken) {
       return NextResponse.redirect(
-        new URL(`/${userData.role}/dashboard`, request.url)
+        new URL(`/${userRole}/dashboard`, request.url)
       );
     }
     return NextResponse.next();
   }
 
   // Redirect to login if not authenticated
-  if (!accounts) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  if (!authToken || !userRole) {
+    const loginUrl = new URL("/auth/login", request.url);
+    // Add the attempted URL as a query parameter to redirect back after login
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
-    const userData = JSON.parse(accounts);
-    const userRole = userData.role;
-
-    // Super Admin routes protection
-    if (pathname.startsWith("/super-admin")) {
-      if (userRole !== "super_admin") {
+    // Protected routes based on roles
+    if (pathname.startsWith("/super-admins")) {
+      if (userRole !== process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN) {
+        console.log(`Unauthorized access: ${userRole} trying to access super-admins`);
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     }
 
-    // Admin routes protection
-    if (pathname.startsWith("/admin")) {
-      if (userRole !== "admin") {
+    if (pathname.startsWith("/admins")) {
+      if (userRole !== process.env.NEXT_PUBLIC_ROLE_ADMIN) {
+        console.log(`Unauthorized access: ${userRole} trying to access admins`);
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     }
 
-    // Guru routes protection
     if (pathname.startsWith("/guru")) {
-      if (userRole !== "guru") {
+      if (userRole !== process.env.NEXT_PUBLIC_ROLE_GURU) {
+        console.log(`Unauthorized access: ${userRole} trying to access guru`);
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     }
 
-    // Siswa routes protection
     if (pathname.startsWith("/siswa")) {
-      if (userRole !== "siswa") {
+      if (userRole !== process.env.NEXT_PUBLIC_ROLE_SISWA) {
+        console.log(`Unauthorized access: ${userRole} trying to access siswa`);
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
     }
 
-    // Redirect users to their respective dashboards if they try to access root dashboard
+    // Handle root dashboard redirect
     if (pathname === "/dashboard") {
-      switch (userRole) {
-        case "super_admin":
-          return NextResponse.redirect(new URL("/super-admin/dashboard", request.url));
-        case "admin":
-          return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-        case "guru":
-          return NextResponse.redirect(new URL("/guru/dashboard", request.url));
-        case "siswa":
-          return NextResponse.redirect(new URL("/siswa/dashboard", request.url));
-        default:
-          return NextResponse.redirect(new URL("/auth/login", request.url));
+      const dashboardUrls = {
+        [process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN as string]: "/super-admins/dashboard",
+        [process.env.NEXT_PUBLIC_ROLE_ADMIN as string]: "/admins/dashboard",
+        [process.env.NEXT_PUBLIC_ROLE_GURU as string]: "/guru/dashboard",
+        [process.env.NEXT_PUBLIC_ROLE_SISWA as string]: "/siswa/dashboard"
+      };
+
+      const redirectUrl = dashboardUrls[userRole as keyof typeof dashboardUrls];
+      if (redirectUrl) {
+        return NextResponse.redirect(new URL(redirectUrl, request.url));
       }
+      return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
     return NextResponse.next();
   } catch (error) {
     console.error("Middleware error:", error);
-    // If there's any error parsing the cookie or other issues, redirect to login
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 }
 
 export const config = {
   matcher: [
-    // Auth routes
-    "/auth/login",
-    "/auth/register",
-    // Protected routes
-    "/dashboard",
-    "/super-admin/:path*",
-    "/admin/:path*",
-    "/guru/:path*",
-    "/siswa/:path*",
-    "/profile/:path*",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|public).*)",
+    "/",
   ],
 };
