@@ -47,9 +47,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(true);
         Cookies.set(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!, JSON.stringify(userData), { expires: 7 });
 
+        // Show welcome message based on user role
         switch (userData.role) {
             case "super_admins":
-                router.replace("/super-admins/dashboard");
+                router.push("/super-admins/dashboard");
                 toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
                 break;
             case "admins":

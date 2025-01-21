@@ -6,17 +6,16 @@ import { auth, db } from "@/utils/firebase";
 
 import { toast } from "react-hot-toast";
 
+import { LoginFormValues } from "@/hooks/schema/login/Schema";
+
 import { User } from "@/utils/auth/schema/interface";
 
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-interface LoginData {
-    email: string;
-    password: string;
-}
+import { FirebaseAuthError } from "@/hooks/schema/login/Interface";
 
 export const handleSuperAdminLogin = async (
-    data: LoginData,
+    data: LoginFormValues,
     router: AppRouterInstance,
     loginCallback: (userData: User) => void
 ) => {
@@ -35,8 +34,7 @@ export const handleSuperAdminLogin = async (
                     userCredential.user.uid
                 )
             );
-
-            const userData = userDoc.data() as User | undefined;
+            const userData = userDoc.data();
 
             if (userData?.role === "super_admins") {
                 loginCallback(userData as User);
@@ -48,9 +46,16 @@ export const handleSuperAdminLogin = async (
             }
         }
         return false;
-    } catch (error) {
-        console.error('Login error:', error);
-        toast.error("Email atau password salah");
+    } catch (error: unknown) {
+        console.error(error);
+        if (error && typeof error === "object" && "code" in error) {
+            const firebaseError = error as FirebaseAuthError;
+            if (firebaseError.code === "auth/invalid-credential") {
+                toast.error("Email atau password salah");
+            } else {
+                toast.error("Terjadi kesalahan saat login");
+            }
+        }
         return false;
     }
 };
