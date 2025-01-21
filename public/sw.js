@@ -1,3 +1,8 @@
+// Di awal file
+if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
+  console.error("VAPID public key is not set");
+}
+
 // Mendengarkan event push dari server
 self.addEventListener("push", function (event) {
   console.log("Push received:", event.data.json());

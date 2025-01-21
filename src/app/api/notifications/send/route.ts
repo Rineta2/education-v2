@@ -9,9 +9,14 @@ interface SendNotificationRequest {
     payload: NotificationPayload;
 }
 
+// Validasi VAPID keys
+if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    throw new Error('VAPID keys must be set in environment variables');
+}
+
 const vapidKeys = {
-    publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    privateKey: process.env.VAPID_PRIVATE_KEY!
+    publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    privateKey: process.env.VAPID_PRIVATE_KEY
 };
 
 webpush.setVapidDetails(
