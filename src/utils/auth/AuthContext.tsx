@@ -1,11 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-
 import Cookies from "js-cookie";
-
 import { toast } from "react-hot-toast";
-
 import { User, AuthContextType } from "@/utils/auth/schema/interface";
-
 import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,6 +11,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const router = useRouter();
 
+    // Helper to get role names from .env.local
+    const roles = {
+        SUPER_ADMIN: process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN || "super_admins",
+        ADMIN: process.env.NEXT_PUBLIC_ROLE_ADMIN || "admins",
+        GURU: process.env.NEXT_PUBLIC_ROLE_GURU || "gurus",
+        SISWA: process.env.NEXT_PUBLIC_ROLE_SISWA || "siswa",
+    };
+
+    // Check authentication status
     const checkAuthStatus = useCallback(() => {
         const userData = Cookies.get(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!);
         if (userData) {
@@ -29,54 +34,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const checkRole = useCallback((allowedRole: string) => {
-        const userData = checkAuthStatus();
-        if (!userData || userData.role !== allowedRole) {
-            router.push("/");
-            return false;
-        }
-        return true;
-    }, [checkAuthStatus, router]);
+    // Check role authorization
+    const checkRole = useCallback(
+        (allowedRole: string) => {
+            const userData = checkAuthStatus();
+            if (!userData || userData.role !== allowedRole) {
+                toast.error("Akses ditolak: Anda tidak memiliki izin untuk mengakses halaman ini.");
+                router.push("/");
+                return false;
+            }
+            return true;
+        },
+        [checkAuthStatus, router]
+    );
 
     useEffect(() => {
         checkAuthStatus();
     }, [checkAuthStatus]);
 
+    // Login logic
     const login = (userData: User) => {
         setAccounts(userData);
         setIsAuthenticated(true);
         Cookies.set(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!, JSON.stringify(userData), { expires: 7 });
 
-        // Show welcome message based on user role
+        // Redirect user based on role
         switch (userData.role) {
-            case "super_admins":
+            case roles.SUPER_ADMIN:
                 router.push("/super-admins/dashboard");
                 toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
                 break;
-            case "admins":
-                toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
+            case roles.ADMIN:
                 router.push("/admins/dashboard");
+                toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
                 break;
-            case "guru":
+            case roles.GURU:
+                router.push("/gurus/dashboard");
                 toast.success(`Selamat datang Guru ${userData.namaLengkap}!`);
-                router.push("/guru/dashboard");
                 break;
-            case "siswa":
+            case roles.SISWA:
+                router.push("/siswas/dashboard");
                 toast.success(`Selamat datang Siswa ${userData.namaLengkap}!`);
-                router.push("/siswa/dashboard");
                 break;
             default:
-                toast.success(`Selamat datang ${userData.namaLengkap}!`);
+                toast.error("Role tidak dikenali. Hubungi administrator.");
         }
     };
 
+    // Logout logic
     const logout = () => {
         setAccounts(null);
         setIsAuthenticated(false);
-        // Remove user data from cookies
         Cookies.remove(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!);
         toast.success("Anda telah berhasil logout!");
-        router.push('/');
+        router.push("/");
     };
 
     return (
@@ -86,10 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
-// Custom hook untuk menggunakan AuthContext
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (context === undefined) {
+    if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;

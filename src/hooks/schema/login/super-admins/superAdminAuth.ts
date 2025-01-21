@@ -1,17 +1,10 @@
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-
 import { getDoc, doc } from "firebase/firestore";
-
 import { auth, db } from "@/utils/firebase";
-
 import { toast } from "react-hot-toast";
-
 import { LoginFormValues } from "@/hooks/schema/login/Schema";
-
 import { User } from "@/utils/auth/schema/interface";
-
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-
 import { FirebaseAuthError } from "@/hooks/schema/login/Interface";
 
 export const handleSuperAdminLogin = async (
@@ -20,11 +13,7 @@ export const handleSuperAdminLogin = async (
     loginCallback: (userData: User) => void
 ) => {
     try {
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            data.email,
-            data.password
-        );
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
 
         if (userCredential.user) {
             const userDoc = await getDoc(
