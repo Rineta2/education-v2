@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import { useRouter } from 'next/navigation';
-
 import { auth } from '@/utils/firebase';
 
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -18,14 +16,17 @@ export default function LoginForm() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { login, isAuthenticated } = useAuth();
-    const router = useRouter();
 
     useEffect(() => {
-        // Redirect if already authenticated
-        if (isAuthenticated) {
-            router.replace('/super-admins/dashboard');
-        }
-    }, [isAuthenticated, router]);
+        // Add a small delay to ensure cookies and state are properly synchronized
+        const redirectTimer = setTimeout(() => {
+            if (isAuthenticated) {
+                window.location.href = '/super-admins/dashboard';
+            }
+        }, 100);
+
+        return () => clearTimeout(redirectTimer);
+    }, [isAuthenticated]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,8 +44,9 @@ export default function LoginForm() {
             };
 
             await login(userData);
-            // Force navigation after successful login
-            router.replace('/super-admins/dashboard');
+
+            // Use window.location for hard redirect
+            window.location.href = '/super-admins/dashboard';
         } catch (err: unknown) {
             console.error(err);
             if (err instanceof FirebaseError) {
