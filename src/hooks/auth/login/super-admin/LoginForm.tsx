@@ -1,24 +1,47 @@
-import { LoginFormValues } from '@/hooks/schema/login/Schema'
-import { SubmitHandler, UseFormRegister } from 'react-hook-form'
+import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 interface SuperAdminLoginFormProps {
-    register: UseFormRegister<LoginFormValues>
-    errors: {
-        email?: { message?: string }
-        password?: { message?: string }
-    }
-    onSubmit: SubmitHandler<LoginFormValues>
-    handleSubmit: (callback: SubmitHandler<LoginFormValues>) => (e: React.FormEvent) => void
+    onSubmit: (email: string, password: string) => Promise<void>
     isSubmitting: boolean
 }
 
-export const SuperAdminLoginForm = ({
-    register,
-    errors,
-    onSubmit,
-    handleSubmit,
-    isSubmitting
-}: SuperAdminLoginFormProps) => {
+export const SuperAdminLoginForm = ({ onSubmit, isSubmitting }: SuperAdminLoginFormProps) => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const validateForm = () => {
+        if (!email) {
+            toast.error('Email wajib diisi')
+            return false
+        }
+
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+        if (!emailRegex.test(email)) {
+            toast.error('Email tidak valid')
+            return false
+        }
+
+        if (!password) {
+            toast.error('Password wajib diisi')
+            return false
+        }
+
+        if (password.length < 6) {
+            toast.error('Password minimal 6 karakter')
+            return false
+        }
+
+        return true
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (validateForm()) {
+            await onSubmit(email, password)
+        }
+    }
+
     return (
         <div className="flex flex-col sm:gap-4 gap-5 px-4 sm:px-9 py-4 sm:py-6 justify-center">
             <div className="flex flex-col gap-2 items-center justify-center w-full mb-6 sm:mb-10">
@@ -29,36 +52,33 @@ export const SuperAdminLoginForm = ({
             </div>
 
             <form
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit}
                 className='flex flex-col gap-6 sm:gap-8 w-full'
-                method="POST"
                 noValidate
                 autoComplete="off"
             >
                 <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
-                    {errors.email && (
-                        <p className="text-red-500 text-[12px] sm:text-[14px] mb-2">{errors.email.message}</p>
-                    )}
                     <input
                         type="email"
-                        {...register('email')}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                         placeholder='Email'
                         disabled={isSubmitting}
+                        required
                     />
                 </div>
 
                 <div className="w-full lg:w-[85%] 2xl:w-[70%] mx-auto">
-                    {errors.password && (
-                        <p className="text-red-500 text-[12px] sm:text-[14px] mb-2">{errors.password.message}</p>
-                    )}
                     <input
                         type="password"
-                        {...register('password')}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className='input input-bordered w-full h-[45px] sm:h-[50px] bg-white border-gray-300'
                         placeholder='Password'
                         autoComplete="new-password"
                         disabled={isSubmitting}
+                        required
                     />
                 </div>
 

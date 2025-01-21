@@ -1,38 +1,30 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema, type LoginFormValues } from '@/hooks/schema/login/Schema'
-import { handleSuperAdminLogin } from '@/hooks/schema/login/super-admins/superAdminAuth'
 import { SuperAdminLoginForm } from '@/hooks/auth/login/super-admin/LoginForm'
 import LoginHero from '@/hooks/auth/login/super-admin/LoginHero'
 import { BackButton } from '@/hooks/auth/login/guru/BackButton'
 import { useAuth } from '@/utils/auth/AuthContext'
+import { handleSuperAdminLogin } from '@/hooks/schema/login/super-admins/superAdminAuth'
 
 export default function SuperAdminLogin() {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const router = useRouter()
+    const { login } = useAuth()
 
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema)
-    });
-
-    const router = useRouter();
-    const { login } = useAuth();
-
-    const onSubmit = async (data: LoginFormValues) => {
-        if (isSubmitting) return;
+    const onSubmit = async (email: string, password: string) => {
+        if (isSubmitting) return
 
         try {
-            setIsSubmitting(true);
-            await handleSuperAdminLogin(data, router, login);
+            setIsSubmitting(true)
+            await handleSuperAdminLogin({ email, password }, router, login)
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Login error:', error)
         } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false)
         }
-    };
+    }
 
     return (
         <section className='min-h-screen flex items-center justify-center relative'>
@@ -43,9 +35,6 @@ export default function SuperAdminLogin() {
                 </div>
 
                 <SuperAdminLoginForm
-                    register={register}
-                    handleSubmit={handleSubmit}
-                    errors={errors}
                     onSubmit={onSubmit}
                     isSubmitting={isSubmitting}
                 />

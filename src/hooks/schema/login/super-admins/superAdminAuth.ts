@@ -6,16 +6,17 @@ import { auth, db } from "@/utils/firebase";
 
 import { toast } from "react-hot-toast";
 
-import { LoginFormValues } from "@/hooks/schema/login/Schema";
-
 import { User } from "@/utils/auth/schema/interface";
 
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-import { FirebaseAuthError } from "@/hooks/schema/login/Interface";
+interface LoginData {
+    email: string;
+    password: string;
+}
 
 export const handleSuperAdminLogin = async (
-    data: LoginFormValues,
+    data: LoginData,
     router: AppRouterInstance,
     loginCallback: (userData: User) => void
 ) => {
@@ -34,7 +35,8 @@ export const handleSuperAdminLogin = async (
                     userCredential.user.uid
                 )
             );
-            const userData = userDoc.data();
+
+            const userData = userDoc.data() as User | undefined;
 
             if (userData?.role === process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN) {
                 loginCallback(userData as User);
@@ -42,22 +44,13 @@ export const handleSuperAdminLogin = async (
             } else {
                 await signOut(auth);
                 toast.error("Akses ditolak. Anda bukan super admin.");
-                router.replace('/auth/login/super-admins');
                 return false;
             }
         }
         return false;
-    } catch (error: unknown) {
-        console.error(error);
-        if (error && typeof error === "object" && "code" in error) {
-            const firebaseError = error as FirebaseAuthError;
-            if (firebaseError.code === "auth/invalid-credential") {
-                toast.error("Email atau password salah");
-            } else {
-                toast.error("Terjadi kesalahan saat login");
-            }
-        }
-        router.replace('/auth/login/super-admins');
+    } catch (error) {
+        console.error('Login error:', error);
+        toast.error("Email atau password salah");
         return false;
     }
 };
