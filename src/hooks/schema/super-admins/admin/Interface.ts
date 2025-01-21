@@ -20,3 +20,14 @@ export interface AdminFormData {
 export interface AdminResponse extends Admin {
     userId: string;
 }
+
+export interface AdminFormModalProps {
+    isOpen: boolean
+    onClose: () => void
+    formData: AdminFormData
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleSubmit: (e: React.FormEvent) => void
+    error: string
+    isSubmitting: boolean
+    selectedAdmin: Admin | null
+}

@@ -22,7 +22,26 @@ export default function Route({ children }: { children: React.ReactNode }) {
 
     return (
         <Fragment>
-            <Toaster position="top-center" />
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 3000,
+                    style: {
+                        background: '#333',
+                        color: '#fff',
+                    },
+                    success: {
+                        style: {
+                            background: '#22c55e',
+                        },
+                    },
+                    error: {
+                        style: {
+                            background: '#ef4444',
+                        },
+                    },
+                }}
+            />
             {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Annount />}
             {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Header />}
             {children}

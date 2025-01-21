@@ -1,40 +1,52 @@
 import { useState, useEffect } from 'react'
 
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
 
 import { db } from '@/utils/firebase'
 
 import { Admin } from '@/hooks/schema/super-admins/admin/Interface'
 
-export const useAdmins = () => {
+interface UseAdminsReturn {
+    admins: Admin[];
+    isLoading: boolean;
+}
+
+export function useAdmins(): UseAdminsReturn {
     const [admins, setAdmins] = useState<Admin[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const adminsQuery = query(collection(db, 'accounts'))
+        setIsLoading(true) // Set loading saat memulai fetch
 
-        // Set up real-time listener
-        const unsubscribe = onSnapshot(adminsQuery, (snapshot) => {
-            const adminsList = snapshot.docs
-                .map(doc => {
-                    const data = doc.data()
-                    return {
-                        userId: doc.id,
-                        email: data.email,
-                        namaLengkap: data.namaLengkap,
-                        role: data.role,
-                        createdAt: data.createdAt,
-                        updatedAt: data.updatedAt,
-                        isActive: data.isActive
-                    } as Admin
-                })
-                .filter(admin => admin.role === 'admins')
+        const adminsQuery = query(
+            collection(db, process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string),
+            where('role', '==', process.env.NEXT_PUBLIC_ROLE_ADMIN as string)
+        )
 
-            setAdmins(adminsList)
-        })
+        const unsubscribe = onSnapshot(adminsQuery,
+            (snapshot) => {
+                const adminsData = snapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    userId: doc.id,
+                    createdAt: doc.data().createdAt?.toDate?.() || doc.data().createdAt
+                })) as Admin[]
 
-        // Cleanup subscription on unmount
+                setAdmins(adminsData)
+                setIsLoading(false)
+            },
+            (error) => {
+                console.error('Error fetching admins:', error)
+                setIsLoading(false)
+                setAdmins([]) // Reset admins jika error
+            }
+        )
+
         return () => unsubscribe()
     }, [])
 
-    return { admins }
+    // Hanya return dummy data jika benar-benar loading
+    return {
+        admins: admins,
+        isLoading
+    }
 }
