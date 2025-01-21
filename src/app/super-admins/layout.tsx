@@ -12,7 +12,7 @@ export default function SuperAdminsLayout({
     children: React.ReactNode;
 }) {
     const { checkRole } = useAuth();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default false untuk mobile
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         checkRole(process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN!);
@@ -21,13 +21,13 @@ export default function SuperAdminsLayout({
     return (
         <Fragment>
             <div className="flex min-h-screen bg-[#F8F9FC]">
-                {/* Sidebar - Updated styling */}
+                {/* Sidebar */}
                 <div
                     className={`
                         fixed inset-0 lg:relative lg:inset-auto
                         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                         lg:translate-x-0 transition-transform duration-300 ease-in-out
-                        w-[280px] bg-white shadow-sm z-30
+                        w-full lg:w-[280px] bg-white shadow-sm z-30
                     `}
                 >
                     <Header setIsSidebarOpen={setIsSidebarOpen} />
@@ -44,15 +44,15 @@ export default function SuperAdminsLayout({
                 {/* Main Content */}
                 <div className="flex-1 relative">
                     {/* Top Navigation Bar */}
-                    <div className="h-16 bg-white border-b flex items-center justify-between px-4 lg:px-6">
+                    <div className="h-14 md:h-16 bg-white border-b flex items-center justify-between px-3 md:px-4 lg:px-6">
                         {/* Left side */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
                             <button
-                                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+                                className="lg:hidden p-1.5 md:p-2 hover:bg-gray-100 rounded-lg"
                                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                             >
                                 <svg
-                                    className="w-6 h-6 text-gray-500"
+                                    className="w-5 h-5 md:w-6 md:h-6 text-gray-500"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -71,11 +71,11 @@ export default function SuperAdminsLayout({
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Search anything here"
-                                    className="w-[300px] h-10 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    placeholder="Search..."
+                                    className="w-fit sm:w-[200px] md:w-[250px] lg:w-[300px] h-9 md:h-10 px-3 md:px-4 text-xs sm:text-sm rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                 />
                                 <svg
-                                    className="w-5 h-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2"
+                                    className="w-4 h-4 md:w-5 md:h-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -91,10 +91,10 @@ export default function SuperAdminsLayout({
                         </div>
 
                         {/* Right side */}
-                        <div className="flex items-center gap-3">
-                            <button className="p-2 hover:bg-gray-100 rounded-lg">
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <button className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg">
                                 <svg
-                                    className="w-6 h-6 text-gray-500"
+                                    className="w-5 h-5 md:w-6 md:h-6 text-gray-500"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -107,9 +107,9 @@ export default function SuperAdminsLayout({
                                     />
                                 </svg>
                             </button>
-                            <button className="p-2 hover:bg-gray-100 rounded-lg">
+                            <button className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg">
                                 <svg
-                                    className="w-6 h-6 text-gray-500"
+                                    className="w-5 h-5 md:w-6 md:h-6 text-gray-500"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -125,7 +125,7 @@ export default function SuperAdminsLayout({
                         </div>
                     </div>
 
-                    <main className="p-6">
+                    <main>
                         {children}
                     </main>
                 </div>

@@ -1,11 +1,34 @@
 import { FiHome, FiUsers, FiSettings } from 'react-icons/fi';
 
+import { ImUserTie } from "react-icons/im";
+
+import { RiAdminFill } from "react-icons/ri";
 
 export const menuItems = [
     {
         icon: FiHome,
         label: 'Dashboard',
         href: '/super-admins/dashboard',
+    },
+
+    {
+        icon: RiAdminFill,
+        label: 'Admin',
+        href: '/super-admins/dashboard',
+        subItems: [
+            { label: 'Daftar Admin', href: '/super-admins/dashboard/admins' },
+            { label: 'Tambah Admin', href: '/super-admins/dashboard/admins/add' },
+        ]
+    },
+
+    {
+        icon: ImUserTie,
+        label: 'Teacher',
+        href: '/super-admins/teacher',
+        subItems: [
+            { label: 'Daftar Teacher', href: '/super-admins/teacher/list' },
+            { label: 'Tambah Teacher', href: '/super-admins/teacher/add' },
+        ]
     },
 
     {
