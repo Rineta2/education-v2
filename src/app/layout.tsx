@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   description: "SMK Negeri 1 Kota Tangerang",
 };
 
-import Route from "@/components/route/route";
+import Pathname from "@/components/route/Pathname";
 
-import Providers from "@/utils/auth/Providers";
+import Providers from "@/components/route/Providers";
 
 export default function RootLayout({
   children,
@@ -34,9 +34,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans`}
       >
         <Providers>
-          <Route>
+          <Pathname>
             {children}
-          </Route>
+          </Pathname>
         </Providers>
       </body>
     </html>
