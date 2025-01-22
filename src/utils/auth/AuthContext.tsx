@@ -1,9 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
 import { auth, db } from '@/utils/firebase';
-import { Role } from './schema/auth';
-import { User } from './schema/interface';
+
+import { Role } from '@/utils/auth/schema/auth';
+
+import { User } from '@/utils/auth/schema/interface';
+
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+
 import { doc, getDoc } from 'firebase/firestore';
+
 import toast from 'react-hot-toast';
 
 type AuthContextType = {

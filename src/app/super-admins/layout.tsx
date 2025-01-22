@@ -15,18 +15,20 @@ export default function SuperAdminsLayout({
 }) {
     const { hasRole, user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
     useEffect(() => {
-        if (!user) {
-            window.location.href = '/auth/login';
-            return;
-        }
-
-        if (!hasRole(Role.SUPER_ADMIN)) {
+        if (!user || !hasRole(Role.SUPER_ADMIN)) {
             window.location.href = '/';
             return;
         }
+        setIsAuthorized(true);
     }, [hasRole, user]);
+
+    // Jangan render apapun sampai authorization selesai
+    if (!isAuthorized) {
+        return null;
+    }
 
     return (
         <Fragment>

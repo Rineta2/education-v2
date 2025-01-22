@@ -23,25 +23,22 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for authentication token
+  // Check for authentication token and user role
   const token = request.cookies.get('auth-token');
-  if (!token) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
-  }
-
-  // Get user role from session/token
   const userRole = request.cookies.get('user-role')?.value;
 
-  if (!userRole) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+  // If no token or role, redirect to home page
+  if (!token || !userRole) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   // Check role-based access
   const allowedPaths = rolePathMap[userRole as unknown as Role] || [];
   const hasAccess = allowedPaths.some(path => pathname.startsWith(path));
 
+  // If no access, redirect to home page instead of unauthorized
   if (!hasAccess) {
-    return NextResponse.redirect(new URL('/unauthorized', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();
