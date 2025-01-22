@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 
 import { LoginFormValues } from "@/hooks/schema/login/Schema";
 
-import { FirebaseAuthError } from "@/hooks/schema/login/Interface";
+import { FirebaseAuthError } from "@/hooks/schema/login/siswa/Interface";
 
 export const handleSiswaLogin = async (data: LoginFormValues) => {
   try {

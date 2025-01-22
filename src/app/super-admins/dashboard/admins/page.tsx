@@ -1,118 +1,126 @@
-'use client'
+"use client"
 
-import React, { useState, useMemo } from 'react'
+import React, { useEffect } from 'react';
 
-import { useAdmins } from '@/utils/lib/super-admins/admins/useAdmins'
+import { useAdminManagement } from '@/hooks/dashboard/super-admins/admins/utils/useAdminManagement';
 
-import { useAdminManagement } from '@/hooks/dashboard/super-admins/utils/useAdminManagement'
+import AddEditModal from '@/hooks/dashboard/super-admins/admins/EditModal';
 
-import { AdminFormModal } from '@/hooks/dashboard/super-admins/AdminFormModal'
+import DeleteModal from '@/hooks/dashboard/super-admins/admins/DeleteModal';
 
-import { DeleteConfirmationModal } from '@/hooks/dashboard/super-admins/DeleteModal'
+import AdminTable from '@/hooks/dashboard/super-admins/admins/AdminTable';
 
-import { AdminTable } from '@/hooks/dashboard/super-admins/Table'
+import Pagination from '@/hooks/dashboard/super-admins/admins/Pagination';
 
-import { SearchBar } from '@/hooks/dashboard/super-admins/SearchBar'
-
-import { Pagination } from '@/hooks/dashboard/super-admins/Pagination'
-
-export default function Admins() {
-    const { admins, isLoading } = useAdmins()
-    const [searchTerm, setSearchTerm] = useState('')
+export default function AdminPage() {
     const {
+        admins,
         isModalOpen,
         setIsModalOpen,
-        selectedAdmin,
         formData,
-        error,
-        isSubmitting,
+        isEditing,
+        isLoading,
+        searchTerm,
+        setSearchTerm,
+        currentPage,
+        setCurrentPage,
         isDeleteModalOpen,
-        handleEdit,
-        handleCloseModal,
+        isDeleteLoading,
+        isDataLoading,
+        setIsDeleteModalOpen,
+        totalPages,
+        filteredAdmins,
+        handleSubmit,
         handleDelete,
         confirmDelete,
-        cancelDelete,
-        handleSubmit,
-        handleChange
-    } = useAdminManagement()
-    const [itemsPerPage] = useState(10)
-    const [currentPage, setCurrentPage] = useState(0)
+        handleEdit,
+        handleCloseModal,
+        setFormData,
+    } = useAdminManagement();
 
-    // Add skeleton array
-    const skeletonArray = useMemo(() => Array(5).fill(null), [])
+    // Body scroll lock effect
+    useEffect(() => {
+        if (isModalOpen || isDeleteModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
 
-    const filteredAdmins = isLoading
-        ? skeletonArray // Use skeleton array when loading
-        : admins.filter(admin =>
-            admin.email?.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-
-    // Calculate pagination
-    const pageCount = Math.ceil(filteredAdmins.length / itemsPerPage)
-    const offset = currentPage * itemsPerPage
-    const currentItems = filteredAdmins.slice(offset, offset + itemsPerPage)
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page)
-    }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isModalOpen, isDeleteModalOpen]);
 
     return (
-        <section className="min-h-screen min-w-full bg-gray-50 p-4 sm:px-6 lg:px-8">
-            <div className="container mx-auto">
-                <div className="mb-8 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-[24px] font-semibold text-title">Daftar Admin</h1>
-                        <p className="mt-2 text-[14px] text-text">
-                            Kelola semua admin dalam sistem
-                        </p>
-                    </div>
+        <section className="min-h-screen w-full">
+            <div className="container mx-auto px-2 sm:px-4">
+                <h1 className="text-2xl md:text-3xl font-bold mb-6 text-title">Kelola Admin</h1>
+                <p className="text-sm text-gray-500 mb-6">Kelola admin yang terdaftar di sistem</p>
 
-                    <div className="mt-4 sm:mt-0">
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-[14px] font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            <svg className="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Tambah Admin
-                        </button>
+                {/* Search and Add Button */}
+                <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6">
+                    <div className="relative w-full md:w-64">
+                        <input
+                            type="text"
+                            placeholder="Cari admin..."
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="w-full p-2.5 pl-10 border rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        />
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </div>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Tambah Admin
+                    </button>
                 </div>
 
-                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
+                {/* Admin Table */}
                 <AdminTable
-                    currentItems={currentItems}
-                    isLoading={isLoading}
-                    skeletonArray={skeletonArray}
-                    handleEdit={handleEdit}
-                    handleDelete={handleDelete}
+                    admins={admins}
+                    isLoading={isDataLoading}
+                    searchTerm={searchTerm}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
                 />
 
+                {/* Pagination */}
                 <Pagination
                     currentPage={currentPage}
-                    pageCount={pageCount}
-                    onPageChange={handlePageChange}
+                    totalPages={totalPages}
+                    totalItems={filteredAdmins.length}
+                    itemsPerPage={10}
+                    onPageChange={setCurrentPage}
                 />
 
-                <AdminFormModal
+                {/* Modals */}
+                <AddEditModal
                     isOpen={isModalOpen}
-                    onClose={handleCloseModal}
+                    isEditing={isEditing}
+                    isLoading={isLoading}
                     formData={formData}
-                    handleChange={handleChange}
-                    handleSubmit={handleSubmit}
-                    error={error}
-                    isSubmitting={isSubmitting}
-                    selectedAdmin={selectedAdmin}
+                    onClose={handleCloseModal}
+                    onSubmit={handleSubmit}
+                    onFormChange={setFormData}
                 />
 
-                <DeleteConfirmationModal
+                <DeleteModal
                     isOpen={isDeleteModalOpen}
+                    isLoading={isDeleteLoading}
+                    onClose={() => setIsDeleteModalOpen(false)}
                     onConfirm={confirmDelete}
-                    onCancel={cancelDelete}
                 />
             </div>
         </section>
-    )
+    );
 }

@@ -39,7 +39,7 @@ export default function SuperAdminsLayout({
                         fixed inset-0 lg:relative lg:inset-auto
                         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                         lg:translate-x-0 transition-transform duration-300 ease-in-out
-                        w-full lg:w-[280px] bg-white shadow-sm z-30
+                        w-72 lg:w-[280px] bg-white shadow-sm z-30
                     `}
                 >
                     <Header setIsSidebarOpen={setIsSidebarOpen} />
@@ -54,9 +54,9 @@ export default function SuperAdminsLayout({
                 )}
 
                 {/* Main Content */}
-                <div className="flex-1 relative">
+                <div className="flex-1 relative w-full lg:w-[calc(100%-280px)]">
                     {/* Top Navigation Bar */}
-                    <div className="h-14 md:h-16 bg-white border-b flex items-center justify-between px-3 md:px-4 lg:px-6">
+                    <div className="sticky top-0 z-20 h-14 md:h-16 bg-white border-b flex items-center justify-between px-3 md:px-4 lg:px-6">
                         {/* Left side */}
                         <div className="flex items-center gap-2 md:gap-4">
                             <button
@@ -80,11 +80,11 @@ export default function SuperAdminsLayout({
                                     />
                                 </svg>
                             </button>
-                            <div className="relative">
+                            <div className="relative hidden sm:block">
                                 <input
                                     type="text"
                                     placeholder="Search..."
-                                    className="w-fit sm:w-[200px] md:w-[250px] lg:w-[300px] h-9 md:h-10 px-3 md:px-4 text-xs sm:text-sm rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    className="w-[200px] md:w-[250px] lg:w-[300px] h-9 md:h-10 px-3 md:px-4 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                 />
                                 <svg
                                     className="w-4 h-4 md:w-5 md:h-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2"
