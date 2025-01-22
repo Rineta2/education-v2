@@ -41,7 +41,6 @@ export default function Header() {
         return `/${formatRole(accounts.role)}/dashboard`;
     };
 
-
     return (
         <header className='sticky top-0 left-0 right-0 z-50 w-full bg-background px-5 py-4'>
             <div className="flex justify-between items-center container">

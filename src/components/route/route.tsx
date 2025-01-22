@@ -16,11 +16,27 @@ import { useNotification } from "@/hooks/useNotification";
 
 export default function Route({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isAuth = pathname.includes("auth");
-    const isSuperAdmin = pathname.includes("super-admins");
-    const isAdmin = pathname.includes("admin");
-    const isGuru = pathname.includes("guru");
-    const isSiswa = pathname.includes("siswa");
+
+    // Ubah logika untuk menampilkan komponen
+    const shouldShowPublicComponents = useCallback(() => {
+        // Daftar path yang tidak menampilkan header, footer, dan announcement
+        const protectedPaths = [
+            '/auth',
+            '/super-admin',
+            '/admin',
+            '/guru',
+            '/siswa'
+        ];
+
+        // Cek apakah current path termasuk dalam protected paths
+        return !protectedPaths.some(path =>
+            pathname.toLowerCase().startsWith(path.toLowerCase())
+        );
+    }, [pathname]);
+
+    // Debug untuk production
+    console.log('Current pathname:', pathname);
+    console.log('Should show public components:', shouldShowPublicComponents());
 
     const { requestPermission, subscribeToNotifications, checkNotificationStatus } = useNotification();
 
@@ -60,10 +76,11 @@ export default function Route({ children }: { children: React.ReactNode }) {
                     },
                 }}
             />
-            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Annount />}
-            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Header />}
+            {/* Render komponen berdasarkan kondisi */}
+            {shouldShowPublicComponents() && <Annount />}
+            {shouldShowPublicComponents() && <Header />}
             {children}
-            {!isAuth && !isSuperAdmin && !isAdmin && !isGuru && !isSiswa && <Footer />}
+            {shouldShowPublicComponents() && <Footer />}
         </Fragment>
     );
 }
