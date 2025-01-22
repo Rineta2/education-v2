@@ -19,16 +19,24 @@ export default function Route({ children }: { children: React.ReactNode }) {
 
     // Ubah logika untuk menampilkan komponen
     const shouldShowPublicComponents = useCallback(() => {
-        // Daftar path yang tidak menampilkan header, footer, dan announcement
+        // Sesuaikan dengan path yang digunakan di AuthContext dan middleware
         const protectedPaths = [
             '/auth',
-            '/super-admin',
-            '/admin',
-            '/guru',
-            '/siswa'
+            '/super-admins', // sesuai dengan redirect di AuthContext
+            '/admins',       // sesuai dengan redirect di AuthContext
+            '/guru',        // sesuai dengan redirect di AuthContext
+            '/siswa'        // sesuai dengan redirect di AuthContext
         ];
 
-        // Cek apakah current path termasuk dalam protected paths
+        // Debug untuk production
+        console.log('Route Check:', {
+            pathname,
+            protectedPaths,
+            matchFound: protectedPaths.some(path =>
+                pathname.toLowerCase().startsWith(path.toLowerCase())
+            )
+        });
+
         return !protectedPaths.some(path =>
             pathname.toLowerCase().startsWith(path.toLowerCase())
         );

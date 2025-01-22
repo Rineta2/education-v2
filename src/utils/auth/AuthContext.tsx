@@ -1,7 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+
 import Cookies from "js-cookie";
+
 import { toast } from "react-hot-toast";
+
 import { User, AuthContextType } from "@/utils/auth/schema/interface";
+
 import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,10 +17,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Helper to get role names from .env.local
     const roles = {
-        SUPER_ADMIN: process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN || "super_admins",
-        ADMIN: process.env.NEXT_PUBLIC_ROLE_ADMIN || "admins",
-        GURU: process.env.NEXT_PUBLIC_ROLE_GURU || "gurus",
-        SISWA: process.env.NEXT_PUBLIC_ROLE_SISWA || "siswa",
+        SUPER_ADMIN: process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN,
+        ADMIN: process.env.NEXT_PUBLIC_ROLE_ADMIN,
+        GURU: process.env.NEXT_PUBLIC_ROLE_GURU,
+        SISWA: process.env.NEXT_PUBLIC_ROLE_SISWA,
     };
 
     // Check authentication status
@@ -69,11 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
                 break;
             case roles.GURU:
-                router.push("/gurus/dashboard");
+                router.push("/guru/dashboard");
                 toast.success(`Selamat datang Guru ${userData.namaLengkap}!`);
                 break;
             case roles.SISWA:
-                router.push("/siswas/dashboard");
+                router.push("/siswa/dashboard");
                 toast.success(`Selamat datang Siswa ${userData.namaLengkap}!`);
                 break;
             default:
