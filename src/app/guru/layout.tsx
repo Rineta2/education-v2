@@ -11,10 +11,10 @@ export default function GuruLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { accounts, isAuthenticated } = useAuth();
+    const { hasRole } = useAuth();
 
     // Don't render anything while checking authentication
-    if (!isAuthenticated || accounts?.role !== "guru") {
+    if (!hasRole("guru")) {
         return null;
     }
 

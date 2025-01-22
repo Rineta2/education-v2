@@ -32,7 +32,10 @@ export default function Guru() {
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        await handleGuruLogin(data, router, login);
+        await handleGuruLogin({
+            email: data.email,
+            password: data.password
+        }, router, login);
     };
 
     return (
