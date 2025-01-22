@@ -15,7 +15,8 @@ export default function SuperAdminsLayout({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
-        checkRole(process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN!);
+        const role = process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN || 'super-admin';
+        checkRole(role);
     }, [checkRole]);
 
     return (

@@ -4,17 +4,17 @@ import React, { useState, useMemo } from 'react'
 
 import { useAdmins } from '@/utils/lib/super-admins/admins/useAdmins'
 
-import { useAdminManagement } from '@/app/super-admins/dashboard/admins/components/utils/useAdminManagement'
+import { useAdminManagement } from '@/hooks/dashboard/super-admins/utils/useAdminManagement'
 
-import { AdminFormModal } from '@/app/super-admins/dashboard/admins/components/AdminFormModal'
+import { AdminFormModal } from '@/hooks/dashboard/super-admins/AdminFormModal'
 
-import { DeleteConfirmationModal } from '@/app/super-admins/dashboard/admins/components/DeleteModal'
+import { DeleteConfirmationModal } from '@/hooks/dashboard/super-admins/DeleteModal'
 
-import { AdminTable } from '@/app/super-admins/dashboard/admins/components/Table'
+import { AdminTable } from '@/hooks/dashboard/super-admins/Table'
 
-import { SearchBar } from '@/app/super-admins/dashboard/admins/components/SearchBar'
+import { SearchBar } from '@/hooks/dashboard/super-admins/SearchBar'
 
-import { Pagination } from '@/app/super-admins/dashboard/admins/components/Pagination'
+import { Pagination } from '@/hooks/dashboard/super-admins/Pagination'
 
 export default function Admins() {
     const { admins, isLoading } = useAdmins()

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { TableRow } from '@/app/super-admins/dashboard/admins/components/TableRow'
+import { TableRow } from '@/hooks/dashboard/super-admins/TableRow'
 
 import { Admin } from '@/hooks/schema/super-admins/admin/Interface'
 
