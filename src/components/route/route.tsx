@@ -17,34 +17,29 @@ import { useNotification } from "@/hooks/useNotification";
 export default function Route({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
-    // Ubah logika untuk menampilkan komponen
-    const shouldShowPublicComponents = useCallback(() => {
-        // Sesuaikan dengan path yang digunakan di AuthContext dan middleware
-        const protectedPaths = [
+    const shouldHidePublicComponents = useCallback(() => {
+        // Paths yang tidak menampilkan header, footer, dan announcement
+        const publicPaths = [
             '/auth',
-            '/super-admins', // sesuai dengan redirect di AuthContext
-            '/admins',       // sesuai dengan redirect di AuthContext
-            '/guru',        // sesuai dengan redirect di AuthContext
-            '/siswa'        // sesuai dengan redirect di AuthContext
+            '/super-admins',
+            '/admins',
+            '/guru',
+            '/siswa'
         ];
 
         // Debug untuk production
         console.log('Route Check:', {
             pathname,
-            protectedPaths,
-            matchFound: protectedPaths.some(path =>
+            publicPaths,
+            isProtectedRoute: publicPaths.some(path =>
                 pathname.toLowerCase().startsWith(path.toLowerCase())
             )
         });
 
-        return !protectedPaths.some(path =>
+        return publicPaths.some(path =>
             pathname.toLowerCase().startsWith(path.toLowerCase())
         );
     }, [pathname]);
-
-    // Debug untuk production
-    console.log('Current pathname:', pathname);
-    console.log('Should show public components:', shouldShowPublicComponents());
 
     const { requestPermission, subscribeToNotifications, checkNotificationStatus } = useNotification();
 
@@ -84,11 +79,17 @@ export default function Route({ children }: { children: React.ReactNode }) {
                     },
                 }}
             />
-            {/* Render komponen berdasarkan kondisi */}
-            {shouldShowPublicComponents() && <Annount />}
-            {shouldShowPublicComponents() && <Header />}
+            {/* Render children (dashboard) terlebih dahulu */}
             {children}
-            {shouldShowPublicComponents() && <Footer />}
+
+            {/* Render komponen publik jika bukan protected route */}
+            {!shouldHidePublicComponents() && (
+                <>
+                    <Annount />
+                    <Header />
+                    <Footer />
+                </>
+            )}
         </Fragment>
     );
 }
