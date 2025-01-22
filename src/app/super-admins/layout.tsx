@@ -2,7 +2,8 @@
 
 import { useAuth } from "@/utils/auth/AuthContext";
 import { useEffect, useState } from "react";
-import Header from "@/components/layout/super-admins/Header"
+import Header from "@/components/layout/super-admins/Header";
+import { useRouter } from "next/navigation";
 
 export default function SuperAdminsLayout({
     children,
@@ -11,10 +12,25 @@ export default function SuperAdminsLayout({
 }) {
     const { checkRole } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
-        checkRole(process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN!);
-    }, [checkRole]);
+        const init = async () => {
+            try {
+                await checkRole(process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN!);
+                setIsLoading(false);
+            } catch {
+                router.push('/');
+            }
+        };
+
+        init();
+    }, [checkRole, router]);
+
+    if (isLoading) {
+        return null; // atau loading spinner
+    }
 
     return (
         <div className="flex min-h-screen bg-[#F8F9FC]">
