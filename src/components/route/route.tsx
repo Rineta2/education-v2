@@ -1,6 +1,103 @@
+// "use client";
+
+// import React, { Fragment, useEffect, useCallback } from "react";
+
+// import Header from "@/components/layout/Header";
+
+// import Footer from "@/components/layout/Footer";
+
+// import { usePathname } from "next/navigation";
+
+// import Annount from "@/components/layout/Annount";
+
+// import { Toaster } from "react-hot-toast";
+
+// import { useNotification } from "@/hooks/useNotification";
+
+// export default function Route({ children }: { children: React.ReactNode }) {
+//     const pathname = usePathname();
+
+//     const shouldHidePublicComponents = useCallback(() => {
+//         // Paths yang tidak menampilkan header, footer, dan announcement
+//         const publicPaths = [
+//             '/auth',
+//             '/super-admins',
+//             '/admins',
+//             '/guru',
+//             '/siswa'
+//         ];
+
+//         // Debug untuk production
+//         console.log('Route Check:', {
+//             pathname,
+//             publicPaths,
+//             isProtectedRoute: publicPaths.some(path =>
+//                 pathname.toLowerCase().startsWith(path.toLowerCase())
+//             )
+//         });
+
+//         return publicPaths.some(path =>
+//             pathname.toLowerCase().startsWith(path.toLowerCase())
+//         );
+//     }, [pathname]);
+
+//     const { requestPermission, subscribeToNotifications, checkNotificationStatus } = useNotification();
+
+//     const setupNotifications = useCallback(async () => {
+//         const status = await checkNotificationStatus();
+//         if (status.supported && !status.subscriptionActive) {
+//             const granted = await requestPermission();
+//             if (granted) {
+//                 await subscribeToNotifications();
+//             }
+//         }
+//     }, [checkNotificationStatus, requestPermission, subscribeToNotifications]);
+
+//     useEffect(() => {
+//         setupNotifications();
+//     }, [setupNotifications]);
+
+//     return (
+//         <Fragment>
+//             <Toaster
+//                 position="top-center"
+//                 toastOptions={{
+//                     duration: 3000,
+//                     style: {
+//                         background: '#333',
+//                         color: '#fff',
+//                     },
+//                     success: {
+//                         style: {
+//                             background: '#22c55e',
+//                         },
+//                     },
+//                     error: {
+//                         style: {
+//                             background: '#ef4444',
+//                         },
+//                     },
+//                 }}
+//             />
+//             {/* Render children (dashboard) terlebih dahulu */}
+//             {children}
+
+//             {/* Render komponen publik jika bukan protected route */}
+//             {!shouldHidePublicComponents() && (
+//                 <>
+//                     <Annount />
+//                     <Header />
+//                     <Footer />
+//                 </>
+//             )}
+//         </Fragment>
+//     );
+// }
+
+
 "use client";
 
-import React, { Fragment, useEffect, useCallback } from "react";
+import React from "react";
 
 import Header from "@/components/layout/Header";
 
@@ -12,53 +109,23 @@ import Annount from "@/components/layout/Annount";
 
 import { Toaster } from "react-hot-toast";
 
-import { useNotification } from "@/hooks/useNotification";
+// import { useNotification } from "@/hooks/useNotification";
 
-export default function Route({ children }: { children: React.ReactNode }) {
+const Pathname = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
 
-    const shouldHidePublicComponents = useCallback(() => {
-        // Paths yang tidak menampilkan header, footer, dan announcement
-        const publicPaths = [
-            '/auth',
-            '/super-admins',
-            '/admins',
-            '/guru',
-            '/siswa'
-        ];
+    const isDashboard = pathname.includes("dashboard");
 
-        // Debug untuk production
-        console.log('Route Check:', {
-            pathname,
-            publicPaths,
-            isProtectedRoute: publicPaths.some(path =>
-                pathname.toLowerCase().startsWith(path.toLowerCase())
-            )
-        });
+    const isSuperAdmins = pathname.includes("super-admins");
 
-        return publicPaths.some(path =>
-            pathname.toLowerCase().startsWith(path.toLowerCase())
-        );
-    }, [pathname]);
+    const isAdmins = pathname.includes("admins");
 
-    const { requestPermission, subscribeToNotifications, checkNotificationStatus } = useNotification();
+    const isGuru = pathname.includes("guru");
 
-    const setupNotifications = useCallback(async () => {
-        const status = await checkNotificationStatus();
-        if (status.supported && !status.subscriptionActive) {
-            const granted = await requestPermission();
-            if (granted) {
-                await subscribeToNotifications();
-            }
-        }
-    }, [checkNotificationStatus, requestPermission, subscribeToNotifications]);
-
-    useEffect(() => {
-        setupNotifications();
-    }, [setupNotifications]);
+    const isSiswa = pathname.includes("siswa");
 
     return (
-        <Fragment>
+        <main>
             <Toaster
                 position="top-center"
                 toastOptions={{
@@ -79,17 +146,12 @@ export default function Route({ children }: { children: React.ReactNode }) {
                     },
                 }}
             />
-            {/* Render children (dashboard) terlebih dahulu */}
+            {!isDashboard && !isSuperAdmins && !isAdmins && !isGuru && !isSiswa && <Annount />}
+            {!isDashboard && !isSuperAdmins && !isAdmins && !isGuru && !isSiswa && <Header />}
             {children}
-
-            {/* Render komponen publik jika bukan protected route */}
-            {!shouldHidePublicComponents() && (
-                <>
-                    <Annount />
-                    <Header />
-                    <Footer />
-                </>
-            )}
-        </Fragment>
+            {!isDashboard && !isSuperAdmins && !isAdmins && !isGuru && !isSiswa && <Footer />}
+        </main>
     );
-}
+};
+
+export default Pathname;
