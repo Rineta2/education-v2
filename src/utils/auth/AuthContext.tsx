@@ -1,129 +1,142 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { auth, db } from '@/utils/firebase';
+import { Role } from './schema/auth';
+import { User } from './schema/interface';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
-import Cookies from "js-cookie";
+type AuthContextType = {
+    user: User | null;
+    loading: boolean;
+    login: (email: string, password: string) => Promise<User>;
+    logout: () => Promise<void>;
+    hasRole: (roles: string | string[]) => boolean;
+    getDashboardUrl: () => string;
+};
 
-import { toast } from "react-hot-toast";
-
-import { User, AuthContextType } from "@/utils/auth/schema/interface";
-
-import { useRouter } from "next/navigation";
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [accounts, setAccounts] = useState<User | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Helper to get role names from .env.local
-    const roles = {
-        SUPER_ADMIN: process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN || 'super-admin',
-        ADMIN: process.env.NEXT_PUBLIC_ROLE_ADMIN || 'admin',
-        GURU: process.env.NEXT_PUBLIC_ROLE_GURU || 'guru',
-        SISWA: process.env.NEXT_PUBLIC_ROLE_SISWA || 'siswa',
+    const login = async (email: string, password: string): Promise<User> => {
+        try {
+            if (!email || !password) {
+                throw new Error('Email dan password harus diisi');
+            }
+
+            const emailString = String(email).trim();
+            const userCredential = await signInWithEmailAndPassword(auth, emailString, password);
+
+            const userDoc = await getDoc(doc(db, 'accounts', userCredential.user.uid));
+            const userData = userDoc.data() as User;
+
+            if (!userData) {
+                throw new Error('User account not found');
+            }
+
+            setUser(userData);
+            const welcomeMessage = getWelcomeMessage(userData.role);
+            toast.success(welcomeMessage);
+            return userData;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error('Login gagal: ' + error.message);
+                throw new Error('Login gagal: ' + error.message);
+            }
+            toast.error('Terjadi kesalahan saat login');
+            throw new Error('Terjadi kesalahan saat login');
+        }
     };
 
-    // Check authentication status
-    const checkAuthStatus = useCallback(() => {
-        const cookieName = process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS || 'user_account';
-        const userData = Cookies.get(cookieName);
-        if (userData) {
-            try {
-                const parsedUser = JSON.parse(userData);
-                setAccounts(parsedUser);
-                setIsAuthenticated(true);
-                return parsedUser;
-            } catch (error) {
-                console.error('Error parsing user data:', error);
-                setAccounts(null);
-                setIsAuthenticated(false);
-                return null;
-            }
-        } else {
-            setAccounts(null);
-            setIsAuthenticated(false);
-            return null;
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            setUser(null);
+            toast.success('Anda berhasil logout');
+        } catch (error) {
+            console.error('Logout error:', error);
+            toast.error('Terjadi kesalahan saat logout');
         }
-    }, []);
+    };
 
-    // Check role authorization
-    const checkRole = useCallback(
-        (allowedRole: string) => {
-            const userData = checkAuthStatus();
-            if (!userData || userData.role !== allowedRole) {
-                toast.error("Akses ditolak: Anda tidak memiliki izin untuk mengakses halaman ini.");
-                router.push("/");
-                return false;
-            }
-            return true;
-        },
-        [checkAuthStatus, router]
-    );
+    const hasRole = (roles: string | string[]): boolean => {
+        if (!user) return false;
+        if (Array.isArray(roles)) {
+            return roles.includes(user.role);
+        }
+        return user.role === roles;
+    };
+
+    const getDashboardUrl = () => {
+        if (!user?.role) return '/';
+
+        switch (user.role) {
+            case Role.SUPER_ADMIN:
+                return '/super-admins/dashboard';
+            case Role.ADMIN:
+                return '/admin/dashboard';
+            case Role.GURU:
+                return '/guru/dashboard';
+            case Role.SISWA:
+                return '/siswa/dashboard';
+            default:
+                return '/';
+        }
+    };
+
+    const getWelcomeMessage = (role: string): string => {
+        switch (role) {
+            case Role.SUPER_ADMIN:
+                return 'Selamat datang, Super Admin!';
+            case Role.ADMIN:
+                return 'Selamat datang, Admin!';
+            case Role.GURU:
+                return 'Selamat datang, Guru!';
+            case Role.SISWA:
+                return 'Selamat datang, Siswa!';
+            default:
+                return 'Selamat datang!';
+        }
+    };
 
     useEffect(() => {
-        checkAuthStatus();
-    }, [checkAuthStatus]);
-
-    // Login logic
-    const login = (userData: User) => {
-        try {
-            setAccounts(userData);
-            setIsAuthenticated(true);
-
-            const cookieName = process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS || 'user_account';
-            Cookies.set(cookieName, JSON.stringify(userData), { expires: 7 });
-
-            // Set additional cookies for middleware
-            Cookies.set('authToken', 'true', { expires: 7 });
-            Cookies.set('userRole', userData.role, { expires: 7 });
-
-            // Redirect user based on role
-            switch (userData.role) {
-                case roles.SUPER_ADMIN:
-                    router.push("/super-admins/dashboard");
-                    toast.success(`Selamat datang Super Admin ${userData.namaLengkap}!`);
-                    break;
-                case roles.ADMIN:
-                    router.push("/admins/dashboard");
-                    toast.success(`Selamat datang Admin ${userData.namaLengkap}!`);
-                    break;
-                case roles.GURU:
-                    router.push("/guru/dashboard");
-                    toast.success(`Selamat datang Guru ${userData.namaLengkap}!`);
-                    break;
-                case roles.SISWA:
-                    router.push("/siswa/dashboard");
-                    toast.success(`Selamat datang Siswa ${userData.namaLengkap}!`);
-                    break;
-                default:
-                    toast.error("Role tidak dikenali. Hubungi administrator.");
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const userDoc = await getDoc(doc(db, 'accounts', firebaseUser.uid));
+                const userData = userDoc.data() as User;
+                setUser(userData);
+            } else {
+                setUser(null);
             }
-        } catch (error) {
-            console.error('Login error:', error);
-            toast.error('Terjadi kesalahan saat login. Silakan coba lagi.');
-        }
-    };
+            setLoading(false);
+        });
 
-    // Logout logic
-    const logout = () => {
-        setAccounts(null);
-        setIsAuthenticated(false);
-        Cookies.remove(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS!);
-        toast.success("Anda telah berhasil logout!");
-        router.push("/");
+        return () => unsubscribe();
+    }, []);
+
+    const value = {
+        user,
+        loading,
+        login,
+        logout,
+        hasRole,
+        getDashboardUrl
     };
 
     return (
-        <AuthContext.Provider value={{ accounts, login, logout, isAuthenticated, checkRole }}>
-            {children}
+        <AuthContext.Provider value={value}>
+            {!loading && children}
         </AuthContext.Provider>
     );
 }
 
-export function useAuth() {
+export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-}
+};

@@ -2,6 +2,8 @@
 
 import { useAuth } from "@/utils/auth/AuthContext";
 
+import { Role } from "@/utils/auth/schema/auth";
+
 import { Fragment, useEffect, useState } from "react";
 
 import Header from "@/components/layout/super-admins/Header"
@@ -11,13 +13,20 @@ export default function SuperAdminsLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { checkRole } = useAuth();
+    const { hasRole, user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
-        const role = process.env.NEXT_PUBLIC_ROLE_SUPER_ADMIN || 'super-admin';
-        checkRole(role);
-    }, [checkRole]);
+        if (!user) {
+            window.location.href = '/auth/login';
+            return;
+        }
+
+        if (!hasRole(Role.SUPER_ADMIN)) {
+            window.location.href = '/';
+            return;
+        }
+    }, [hasRole, user]);
 
     return (
         <Fragment>

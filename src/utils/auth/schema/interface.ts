@@ -4,7 +4,7 @@ export interface User {
   id?: string;
   userId?: string;
   email: string;
-  role: "super_admins" | "admins" | "guru" | "siswa";
+  role: "super-admins" | "admin" | "guru" | "siswa";
   namaLengkap: string;
   profilePicture?: string | null;
   isActive?: boolean;

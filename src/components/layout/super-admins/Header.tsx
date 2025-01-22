@@ -17,7 +17,7 @@ interface HeaderProps {
 }
 
 export default function Header({ setIsSidebarOpen }: HeaderProps) {
-    const { accounts, logout } = useAuth();
+    const { user, logout } = useAuth();
     const pathname = usePathname();
     const [activeDropdown, setActiveDropdown] = React.useState<number | null>(null);
 
@@ -75,14 +75,14 @@ export default function Header({ setIsSidebarOpen }: HeaderProps) {
             <div className="p-3 md:p-4 mt-1 md:mt-2 mb-1 md:mb-2 border-b">
                 <div className="flex items-center gap-2 md:gap-3">
                     <Image
-                        src={accounts?.profilePicture || '/images/default-profile.png'}
+                        src={user?.profilePicture || '/images/default-profile.png'}
                         alt="Profile"
                         width={40}
                         height={40}
                         className="rounded-full object-cover w-10 h-10 md:w-14 md:h-14"
                     />
                     <div>
-                        <p className="text-[14px] md:text-[16px] font-medium text-gray-900">{accounts?.namaLengkap}</p>
+                        <p className="text-[14px] md:text-[16px] font-medium text-gray-900">{user?.namaLengkap}</p>
                         <p className="text-[11px] md:text-[12px] text-gray-500">Super Admin</p>
                     </div>
                 </div>

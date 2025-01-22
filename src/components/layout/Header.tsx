@@ -19,7 +19,7 @@ export default function Header() {
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    const { isAuthenticated, accounts, logout } = useAuth();
+    const { user, logout, getDashboardUrl } = useAuth();
 
     // Tambahkan state untuk tracking error gambar
     const [imageError, setImageError] = useState(false);
@@ -30,17 +30,15 @@ export default function Header() {
 
     const pathname = usePathname()
 
-    // Function to format role string (replace underscores with hyphens)
+    // Function to format role string
     const formatRole = (role: string | undefined) => {
-        return role?.replace(/_/g, '-') || '';
+        return role?.toLowerCase() || '';
     };
 
-    // Function to get dashboard URL based on user role
-    const getDashboardUrl = () => {
-        if (!accounts?.role) return '/';
-        return `/${formatRole(accounts.role)}/dashboard`;
+    const handleLogout = async () => {
+        await logout();
+        window.location.href = '/';
     };
-
 
     return (
         <header className='sticky top-0 left-0 right-0 z-50 w-full bg-background px-5 py-4'>
@@ -96,15 +94,15 @@ export default function Header() {
                 </ul>
 
                 {/* Login/User Menu Button for Desktop */}
-                {isAuthenticated ? (
+                {user ? (
                     <div className="hidden lg:flex items-center gap-4 relative">
                         <button
                             onClick={() => toggleDropdown('profile')}
                             className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-lg"
                         >
-                            {accounts?.profilePicture && !imageError ? (
+                            {user.profilePicture && !imageError ? (
                                 <Image
-                                    src={accounts.profilePicture}
+                                    src={user.profilePicture}
                                     alt="Profile"
                                     width={32}
                                     height={32}
@@ -114,12 +112,13 @@ export default function Header() {
                             ) : (
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                                     <span className="text-gray-600 text-sm font-medium">
-                                        {accounts?.namaLengkap?.charAt(0) || 'U'}
+                                        {user.namaLengkap?.charAt(0) || 'U'}
                                     </span>
                                 </div>
                             )}
                             <div className="flex flex-col items-end">
-                                <span className="text-sm font-medium text-title">{accounts?.namaLengkap}</span>
+                                <span className="text-sm font-medium text-title">{user.namaLengkap}</span>
+                                <span className="text-xs text-gray-500">{formatRole(user.role)}</span>
                             </div>
                         </button>
 
@@ -135,7 +134,7 @@ export default function Header() {
                                 </li>
                                 <li>
                                     <Link
-                                        href={`/${formatRole(accounts?.role)}/profile`}
+                                        href={`/${formatRole(user.role)}/profile`}
                                         className="block px-4 py-2 text-sm text-title hover:bg-gray-100"
                                     >
                                         Profile
@@ -143,7 +142,7 @@ export default function Header() {
                                 </li>
                                 <li>
                                     <button
-                                        onClick={logout}
+                                        onClick={handleLogout}
                                         className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                     >
                                         Logout
@@ -220,12 +219,12 @@ export default function Header() {
                                 </li>
                             ))}
                             <li className="pt-4">
-                                {isAuthenticated ? (
+                                {user ? (
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-2 mb-4">
-                                            {accounts?.profilePicture && !imageError ? (
+                                            {user.profilePicture && !imageError ? (
                                                 <Image
-                                                    src={accounts.profilePicture}
+                                                    src={user.profilePicture}
                                                     alt="Profile"
                                                     width={40}
                                                     height={40}
@@ -235,13 +234,13 @@ export default function Header() {
                                             ) : (
                                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                                                     <span className="text-gray-600 text-sm font-medium">
-                                                        {accounts?.namaLengkap?.charAt(0) || 'U'}
+                                                        {user.namaLengkap?.charAt(0) || 'U'}
                                                     </span>
                                                 </div>
                                             )}
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-title">{accounts?.namaLengkap}</span>
-                                                <span className="text-xs text-gray-500">{accounts?.role}</span>
+                                                <span className="text-sm font-medium text-title">{user.namaLengkap}</span>
+                                                <span className="text-xs text-gray-500">{formatRole(user.role)}</span>
                                             </div>
                                         </div>
                                         <Link
@@ -252,7 +251,7 @@ export default function Header() {
                                             Dashboard
                                         </Link>
                                         <Link
-                                            href={`${formatRole(accounts?.role)}/profile`}
+                                            href={`/${formatRole(user.role)}/profile`}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                             className="block w-full text-[16px] font-medium text-title hover:text-primary"
                                         >
@@ -260,7 +259,7 @@ export default function Header() {
                                         </Link>
                                         <button
                                             onClick={() => {
-                                                logout();
+                                                handleLogout();
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="block w-full text-left text-[16px] font-medium text-red-600 hover:text-red-700"

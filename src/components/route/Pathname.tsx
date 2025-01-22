@@ -15,7 +15,12 @@ import Annount from "@/components/layout/Annount";
 const Pathname = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
 
-    const isDashboard = pathname.includes("dashboard");
+    // Check for all dashboard/admin routes
+    const isAdminRoute = pathname.includes("/super-admin") ||
+        pathname.includes("/admin") ||
+        pathname.includes("/guru") ||
+        pathname.includes("/siswa") ||
+        pathname.includes("/auth");
 
     return (
         <main>
@@ -39,10 +44,10 @@ const Pathname = ({ children }: { children: React.ReactNode }) => {
                     },
                 }}
             />
-            {!isDashboard && <Annount />}
-            {!isDashboard && <Header />}
+            {!isAdminRoute && <Annount />}
+            {!isAdminRoute && <Header />}
             {children}
-            {!isDashboard && <Footer />}
+            {!isAdminRoute && <Footer />}
         </main>
     );
 };
