@@ -1,8 +1,0 @@
-{
-  "routes": [
-    { "src": "/super-admins/(.*)", "dest": "/" },
-    { "src": "/admins/(.*)", "dest": "/" },
-    { "src": "/gurus/(.*)", "dest": "/" },
-    { "src": "/siswas/(.*)", "dest": "/" }
-  ]
-}
