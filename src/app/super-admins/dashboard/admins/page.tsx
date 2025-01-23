@@ -53,7 +53,7 @@ export default function AdminPage() {
 
     return (
         <section className="min-h-screen w-full">
-            <div className="container mx-auto px-2 sm:px-4">
+            <div className="container px-2 sm:px-4">
                 <h1 className="text-2xl md:text-3xl font-bold mb-6 text-title">Kelola Admin</h1>
                 <p className="text-sm text-gray-500 mb-6">Kelola admin yang terdaftar di sistem</p>
 

@@ -17,7 +17,6 @@ export const menuItems = [
         href: '/super-admins/dashboard',
         subItems: [
             { label: 'Daftar Admin', href: '/super-admins/dashboard/admins' },
-            { label: 'Tambah Admin', href: '/super-admins/dashboard/admins/add' },
         ]
     },
 

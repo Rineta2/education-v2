@@ -41,7 +41,13 @@ export const useAdminManagement = () => {
             const querySnapshot = await getDocs(q);
             const adminList: Admin[] = [];
             querySnapshot.forEach((doc) => {
-                adminList.push({ id: doc.id, ...doc.data() } as Admin);
+                const data = doc.data();
+                adminList.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt || new Date().toISOString(),
+                    updatedAt: data.updatedAt || new Date().toISOString(),
+                } as Admin);
             });
             setAdmins(adminList);
         } catch {

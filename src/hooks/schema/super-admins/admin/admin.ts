@@ -17,7 +17,7 @@ export interface FormData {
     updatedAt: string;
 }
 
-// 
+// PaginationProps
 
 export interface PaginationProps {
     currentPage: number;
@@ -25,4 +25,35 @@ export interface PaginationProps {
     totalItems: number;
     itemsPerPage: number;
     onPageChange: (page: number) => void;
+}
+
+// AddEditModalProps
+
+export interface AddEditModalProps {
+    isOpen: boolean;
+    isEditing: boolean;
+    isLoading: boolean;
+    formData: FormData;
+    onClose: () => void;
+    onSubmit: (e: React.FormEvent) => void;
+    onFormChange: (formData: FormData) => void;
+}
+
+// AdminTableProps
+
+export interface AdminTableProps {
+    admins: Admin[];
+    isLoading: boolean;
+    searchTerm: string;
+    onEdit: (admin: Admin) => void;
+    onDelete: (id: string) => void;
+}
+
+// DeleteModalProps
+
+export interface DeleteModalProps {
+    isOpen: boolean;
+    isLoading: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
 }
