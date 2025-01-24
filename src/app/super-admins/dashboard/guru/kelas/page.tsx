@@ -1,11 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+
 import { useKelas } from '@/hooks/dashboard/super-admins/guru/kelas/utils/ServiceKelas';
+
 import { usePagination } from '@/hooks/dashboard/super-admins/guru/kelas/utils/usePagination';
+
 import { KelasModal } from '@/hooks/dashboard/super-admins/guru/kelas/KelasModal';
+
 import { KelasTable } from '@/hooks/dashboard/super-admins/guru/kelas/KelasTable';
+
 import { Kelas } from '@/hooks/schema/super-admins/guru/guru';
+
 import { kelasService } from '@/hooks/dashboard/super-admins/guru/kelas/utils/FetchKelas';
 
 export default function KelasPage() {
@@ -73,15 +79,15 @@ export default function KelasPage() {
     const { currentItems, totalPages, indexOfFirstItem, indexOfLastItem, totalItems } = paginateData(kelas);
 
     return (
-        <section className="p-4 sm:p-6 min-h-screen bg-gray-50">
-            <div className="container">
+        <section className="p-4 sm:p-6">
+            <div className="space-y-6">
                 {/* Header Section */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <div className="flex flex-col gap-3 w-full sm:w-auto">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+                    <div className="flex-1 w-full">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-4">
                             Manajemen Kelas
                         </h1>
-                        <div className="relative w-full sm:w-96">
+                        <div className="relative">
                             <input
                                 type="text"
                                 placeholder="Cari kelas..."
@@ -115,34 +121,18 @@ export default function KelasPage() {
                     </button>
                 </div>
 
-                <KelasTable
-                    items={currentItems}
-                    isLoading={isLoading}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
+                {/* Table Section */}
+                <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <KelasTable
+                        items={currentItems}
+                        isLoading={isLoading}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
+                </div>
 
-                <KelasModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    formData={formData}
-                    errors={errors}
-                    isEditing={isEditing}
-                    isSubmitting={isSubmitting}
-                    onSubmit={async (e) => {
-                        const success = await handleSubmit(e);
-                        if (success) setIsModalOpen(false);
-                    }}
-                    onChange={(e) => {
-                        setFormData({ ...formData, [e.target.name]: e.target.value });
-                        if (errors[e.target.name as keyof typeof errors]) {
-                            setErrors({ ...errors, [e.target.name]: undefined });
-                        }
-                    }}
-                />
-
-                {/* Pagination */}
-                <div className="mt-6 flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
+                {/* Pagination Section */}
+                <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
                     {isLoading ? (
                         <>
                             <div className="w-48 h-4 bg-gray-200 rounded animate-pulse"></div>
@@ -158,14 +148,14 @@ export default function KelasPage() {
                                 Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, totalItems)} of {totalItems} entries
                             </div>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setCurrentPage(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className={`flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 
+                                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
                                         ${currentPage === 1
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'}`}
+                                            ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'}`}
                                 >
                                     <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -173,18 +163,18 @@ export default function KelasPage() {
                                     <span className="hidden sm:inline">Previous</span>
                                 </button>
 
-                                <div className="flex items-center space-x-1">
+                                <div className="flex items-center gap-1">
                                     {getPaginationRange(currentPage, totalPages).map((page, index) => (
                                         <button
                                             key={index}
                                             onClick={() => typeof page === 'number' ? setCurrentPage(page) : null}
                                             disabled={page === '...'}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200
+                                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
                                                 ${typeof page !== 'number'
                                                     ? 'cursor-default'
                                                     : page === currentPage
                                                         ? 'bg-blue-600 text-white'
-                                                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+                                                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'
                                                 }`}
                                         >
                                             {page}
@@ -195,10 +185,10 @@ export default function KelasPage() {
                                 <button
                                     onClick={() => setCurrentPage(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className={`flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 
+                                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
                                         ${currentPage === totalPages
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'}`}
+                                            ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'}`}
                                 >
                                     <span className="hidden sm:inline">Next</span>
                                     <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,6 +200,25 @@ export default function KelasPage() {
                     )}
                 </div>
             </div>
+
+            <KelasModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                formData={formData}
+                errors={errors}
+                isEditing={isEditing}
+                isSubmitting={isSubmitting}
+                onSubmit={async (e) => {
+                    const success = await handleSubmit(e);
+                    if (success) setIsModalOpen(false);
+                }}
+                onChange={(e) => {
+                    setFormData({ ...formData, [e.target.name]: e.target.value });
+                    if (errors[e.target.name as keyof typeof errors]) {
+                        setErrors({ ...errors, [e.target.name]: undefined });
+                    }
+                }}
+            />
         </section>
     );
 }

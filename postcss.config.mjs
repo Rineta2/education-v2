@@ -10,6 +10,7 @@ const config = {
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
       ],
     },
+    autoprefixer: {},
   },
 };
 

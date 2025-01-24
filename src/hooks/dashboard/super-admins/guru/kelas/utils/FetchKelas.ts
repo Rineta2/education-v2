@@ -1,4 +1,5 @@
 import { db } from "@/utils/firebase";
+
 import { Timestamp as FirebaseTimestamp } from "firebase/firestore";
 
 import {
@@ -13,7 +14,7 @@ import {
 
 import type { Kelas } from "@/hooks/schema/super-admins/guru/guru";
 
-const COLLECTION_NAME = "kelas";
+const COLLECTION_NAME = process.env.NEXT_PUBLIC_COLLECTIONS_KELAS as string;
 
 type TimestampType = FirebaseTimestamp | string | null | undefined;
 
@@ -28,7 +29,6 @@ export const kelasService = {
       });
       return docRef.id;
     } catch (error) {
-      console.error("Error creating kelas:", error);
       throw error;
     }
   },
@@ -36,18 +36,9 @@ export const kelasService = {
   // Read
   async getAllKelas() {
     try {
-      console.log("Fetching from collection:", COLLECTION_NAME);
       const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
-      console.log("Query snapshot:", querySnapshot);
-      console.log("Number of documents:", querySnapshot.size);
-      console.log(
-        "Documents:",
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
-
       const kelas = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        console.log("Document data:", data);
         return {
           id: doc.id,
           nama: data.nama,
@@ -55,8 +46,6 @@ export const kelasService = {
           updated_at: data.updated_at,
         };
       }) as Kelas[];
-
-      console.log("Processed kelas data:", kelas);
 
       // Sort by created_at timestamp, newest first
       const sortedKelas = kelas.sort((a, b) => {
@@ -73,10 +62,8 @@ export const kelasService = {
         return timeB - timeA;
       });
 
-      console.log("Final sorted kelas:", sortedKelas);
       return sortedKelas;
     } catch (error) {
-      console.error("Error getting kelas:", error);
       throw error;
     }
   },
@@ -93,7 +80,6 @@ export const kelasService = {
         updated_at: serverTimestamp(),
       });
     } catch (error) {
-      console.error("Error updating kelas:", error);
       throw error;
     }
   },
@@ -103,7 +89,6 @@ export const kelasService = {
     try {
       await deleteDoc(doc(db, COLLECTION_NAME, id));
     } catch (error) {
-      console.error("Error deleting kelas:", error);
       throw error;
     }
   },

@@ -26,15 +26,21 @@ export const KelasModal: React.FC<KelasModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md transform transition-all duration-300 scale-100">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-800">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+            <div
+                className="bg-white border border-gray-200 p-4 rounded-2xl shadow-2xl transform transition-all duration-300 scale-100 animate-slideIn"
+                style={{ width: '100%', maxWidth: '400px' }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900">
                         {isEditing ? 'Edit Kelas' : 'Tambah Kelas'}
                     </h2>
+
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        className="text-gray-500 hover:text-gray-700 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100"
+                        aria-label="Close modal"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -42,37 +48,37 @@ export const KelasModal: React.FC<KelasModalProps> = ({
                     </button>
                 </div>
 
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div className="flex flex-col gap-2">
-                        <label className="block mb-1">Nama Kelas</label>
+                <form onSubmit={onSubmit} className="space-y-6">
+                    <div className="space-y-2 flex flex-col gap-4">
+                        <label className="block text-sm font-semibold text-gray-700">Nama Kelas</label>
                         <input
                             type="text"
                             name="nama"
                             value={formData.nama}
                             onChange={onChange}
-                            className={`w-full p-2 border rounded bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                            className="w-full px-4 py-3 border rounded-xl bg-gray-50 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-gray-100 placeholder:text-gray-400"
                             placeholder="Masukkan nama kelas"
                         />
                         {errors.nama && (
-                            <p className="text-red-500 text-sm">{errors.nama}</p>
+                            <p className="text-red-500 text-sm mt-1 animate-shake">{errors.nama}</p>
                         )}
                     </div>
 
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-4 pt-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
+                            className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
                         >
                             Batal
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`${isSubmitting
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-blue-500 hover:bg-blue-600'
-                                } text-white px-4 py-2 rounded transition-colors duration-200`}
+                            className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ${isSubmitting
+                                ? 'bg-blue-400 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5'
+                                }`}
                         >
                             {isSubmitting ? 'Menyimpan...' : (isEditing ? 'Update Kelas' : 'Tambah Kelas')}
                         </button>

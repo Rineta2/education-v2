@@ -89,13 +89,16 @@ export const useGuruManagement = () => {
   const fetchGurus = async () => {
     setIsDataLoading(true);
     try {
-      const accountsRef = collection(db, "accounts");
+      const accountsRef = collection(
+        db,
+        process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string
+      );
       const querySnapshot = await getDocs(accountsRef);
       const guruList: Guru[] = [];
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.role === "guru") {
+        if (data.role === process.env.NEXT_PUBLIC_ROLE_GURU) {
           guruList.push({
             id: doc.id,
             userId: doc.id,
@@ -135,11 +138,18 @@ export const useGuruManagement = () => {
     setIsLoading(true);
     try {
       if (isEditing) {
-        await updateDoc(doc(db, "accounts", editId), {
-          ...formData,
-          isActive: Boolean(formData.isActive),
-          updatedAt: serverTimestamp(),
-        });
+        await updateDoc(
+          doc(
+            db,
+            process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string,
+            editId
+          ),
+          {
+            ...formData,
+            isActive: Boolean(formData.isActive),
+            updatedAt: serverTimestamp(),
+          }
+        );
         toast.success("Data guru berhasil diupdate");
         handleCloseModal();
         fetchGurus();
@@ -165,7 +175,7 @@ export const useGuruManagement = () => {
               email: formData.email,
               password: formData.password,
               namaLengkap: formData.namaLengkap,
-              role: "guru",
+              role: process.env.NEXT_PUBLIC_ROLE_GURU,
               tanggalLahir: formData.tanggalLahir,
               tempatLahir: formData.tempatLahir,
               alamat: formData.alamat,

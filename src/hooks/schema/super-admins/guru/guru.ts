@@ -99,6 +99,35 @@ export interface PaginationProps {
   setCurrentPage: (page: number) => void;
 }
 
+// Mata Pelajaran
+
+export interface MataPelajaran {
+  id?: string;
+  nama: string;
+}
+
+export interface MataPelajaranFormProps {
+  showForm: boolean;
+  isEditing: boolean;
+  isLoading: boolean;
+  formData: MataPelajaran;
+  onClose: () => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onChange: (value: string) => void;
+}
+
+export interface MataPelajaranItemProps {
+  item: MataPelajaran;
+  onEdit: (item: MataPelajaran) => void;
+  onDelete: (id: string) => void;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
 // Kelas
 
 export interface Kelas {

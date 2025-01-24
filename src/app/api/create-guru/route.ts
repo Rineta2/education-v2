@@ -66,17 +66,17 @@ export async function POST(request: Request) {
 
       // Set custom claims untuk role guru
       await adminApp.auth().setCustomUserClaims(userRecord.uid, {
-        role: "guru",
+        role: process.env.NEXT_PUBLIC_ROLE_GURU,
       });
 
       // Simpan data ke collection accounts
       await db
-        .collection("accounts")
+        .collection(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string)
         .doc(userRecord.uid)
         .set({
           email,
           namaLengkap,
-          role: "guru",
+          role: process.env.NEXT_PUBLIC_ROLE_GURU,
           ...otherData,
           isActive: true,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),

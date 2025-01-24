@@ -32,7 +32,10 @@ export async function POST(request: Request) {
 
     try {
       // Verify user exists in Firestore first
-      const userDoc = await db.collection("accounts").doc(uid).get();
+      const userDoc = await db
+        .collection(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string)
+        .doc(uid)
+        .get();
       if (!userDoc.exists) {
         return NextResponse.json(
           { error: "Data guru tidak ditemukan di database" },
@@ -41,7 +44,10 @@ export async function POST(request: Request) {
       }
 
       // 1. Hapus dari Firestore terlebih dahulu
-      await db.collection("accounts").doc(uid).delete();
+      await db
+        .collection(process.env.NEXT_PUBLIC_COLLECTIONS_ACCOUNTS as string)
+        .doc(uid)
+        .delete();
 
       try {
         // 2. Kemudian hapus dari Firebase Auth

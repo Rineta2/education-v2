@@ -87,6 +87,7 @@ export default function Guru() {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 setCurrentPage={setCurrentPage}
+                onPageChange={setCurrentPage}
             />
 
             <Modal isOpen={showForm} onClose={handleCloseModal}>
