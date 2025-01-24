@@ -63,7 +63,7 @@ export async function POST(request: Request) {
             });
 
             await adminApp.auth().setCustomUserClaims(userRecord.uid, {
-                role: 'admin'
+                role: 'guru'
             });
 
             await db.collection('accounts').doc(uid).update({

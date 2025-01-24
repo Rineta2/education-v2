@@ -22,11 +22,12 @@ export const menuItems = [
 
     {
         icon: ImUserTie,
-        label: 'Teacher',
-        href: '/super-admins/teacher',
+        label: 'Guru',
+        href: '/super-admins/dashboard/guru',
         subItems: [
-            { label: 'Daftar Teacher', href: '/super-admins/teacher/list' },
-            { label: 'Tambah Teacher', href: '/super-admins/teacher/add' },
+            { label: 'Daftar Guru', href: '/super-admins/dashboard/guru' },
+            { label: 'Mata Pelajaran', href: '/super-admins/dashboard/guru/mata-pelajaran' },
+            { label: 'Kelas', href: '/super-admins/dashboard/guru/kelas' },
         ]
     },
 
